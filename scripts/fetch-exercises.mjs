@@ -59,6 +59,10 @@ const CONFIG = {
   reqsPerHour: envNumber('EXDB_REQS_PER_HOUR', 800),
   detailCap: envNumber('EXDB_DETAIL_CAP', 1000),
   pageLimit: Math.min(envNumber('EXDB_PAGE_LIMIT', 25), 25),
+  // Observed free-tier behavior: the per-exercise detail endpoint has a burst
+  // limit (~40 rapid calls trips a several-minute "MITIGATION_REDIRECT"
+  // cooloff), so detail calls pace much slower than list calls.
+  detailIntervalMs: envNumber('EXDB_DETAIL_INTERVAL_MS', 15_000),
 }
 
 // Equipment families the app supports (matched against the API's own
@@ -79,7 +83,7 @@ const MIN_INTERVAL_MS = Math.ceil(3_600_000 / CONFIG.reqsPerHour)
 // ── Tiny utilities ──
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-const EMPTY_CACHE = { list: {}, details: {}, nextCursor: null, listComplete: false, taxonomy: null }
+const EMPTY_CACHE = { list: {}, details: {}, failedDetails: {}, nextCursor: null, listComplete: false, taxonomy: null }
 
 function loadCache() {
   if (!existsSync(CACHE_FILE)) return { ...EMPTY_CACHE }
@@ -100,9 +104,10 @@ function saveCache(cache) {
 
 let lastRequestAt = 0
 let requestCount = 0
+const MAX_ATTEMPTS = 4
 
-async function api(pathname, params = {}) {
-  const wait = lastRequestAt + MIN_INTERVAL_MS - Date.now()
+async function api(pathname, params = {}, { intervalMs = MIN_INTERVAL_MS } = {}) {
+  const wait = lastRequestAt + intervalMs - Date.now()
   if (wait > 0) await sleep(wait)
 
   const url = new URL(`https://${CONFIG.host}${pathname}`)
@@ -110,21 +115,26 @@ async function api(pathname, params = {}) {
     if (v != null && v !== '') url.searchParams.set(k, String(v))
   }
 
-  for (let attempt = 1; attempt <= 5; attempt++) {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     lastRequestAt = Date.now()
     requestCount++
+    // redirect: 'manual' — the API signals burst-mitigation with a 307 to an
+    // unauthenticated host; following it would only bounce again. Treat any
+    // redirect exactly like a 429 cooloff.
     const res = await fetch(url, {
+      redirect: 'manual',
       headers: {
         'X-RapidAPI-Key': CONFIG.key,
         'X-RapidAPI-Host': CONFIG.host,
       },
     })
-    if (res.status === 429 || res.status >= 500) {
+    const throttled = res.status === 429 || res.status >= 500 || (res.status >= 300 && res.status < 400)
+    if (throttled) {
       const retryAfter = Number(res.headers.get('retry-after'))
       const backoff = Number.isFinite(retryAfter) && retryAfter > 0
         ? Math.min(retryAfter * 1000, 300_000)
         : Math.min(2 ** attempt * 5_000, 300_000)
-      console.warn(`  ${res.status} on ${pathname} — backing off ${Math.round(backoff / 1000)}s (attempt ${attempt}/5)`)
+      console.warn(`  ${res.status} on ${pathname} — backing off ${Math.round(backoff / 1000)}s (attempt ${attempt}/${MAX_ATTEMPTS})`)
       await sleep(backoff)
       continue
     }
@@ -133,7 +143,7 @@ async function api(pathname, params = {}) {
     }
     return res.json()
   }
-  throw new Error(`Giving up on ${pathname} after 5 throttled attempts — re-run later, progress is cached.`)
+  throw new Error(`Giving up on ${pathname} after ${MAX_ATTEMPTS} throttled attempts — re-run later, progress is cached.`)
 }
 
 // ── Stage 1: taxonomy (bodyparts / equipments / muscles / exercisetypes) ──
@@ -183,6 +193,9 @@ async function fetchIndex(cache) {
 }
 
 // ── Stage 3: rank gym-relevant strength work, fetch full details for the top N ──
+// v2 enums are UPPERCASE ('STRENGTH', 'DUMBBELL', …) — compare accordingly.
+const GYM_EXERCISE_TYPES = new Set(['STRENGTH', 'WEIGHTLIFTING'])
+
 function equipmentSupported(names) {
   return names.every((n) => EQUIPMENT_MATCHERS.some((rx) => rx.test(n)))
 }
@@ -200,7 +213,10 @@ function rank(ex) {
 function selectForDetails(cache) {
   const all = Object.values(cache.list)
   const eligible = all.filter(
-    (ex) => ex.exerciseType === 'strength' && ex.equipments?.length && equipmentSupported(ex.equipments),
+    (ex) =>
+      GYM_EXERCISE_TYPES.has(ex.exerciseType?.toUpperCase()) &&
+      ex.equipments?.length &&
+      equipmentSupported(ex.equipments),
   )
   eligible.sort((a, b) => rank(b) - rank(a))
   const chosen = eligible.slice(0, CONFIG.detailCap)
@@ -211,15 +227,32 @@ function selectForDetails(cache) {
 }
 
 async function fetchDetails(cache, chosen) {
-  const pending = chosen.filter((ex) => !cache.details[ex.exerciseId])
-  console.log(`  ${chosen.length - pending.length} details cached, ${pending.length} to fetch…`)
+  cache.failedDetails ??= {}
+  // Some records are permanently blocked for free-tier detail access
+  // (persistent MITIGATION_REDIRECT on one ID while neighbors succeed).
+  // Skip an ID after it has failed across 2 separate runs — the exercise
+  // still ships with its list-level data, just without tips/media detail.
+  const pending = chosen.filter(
+    (ex) => !cache.details[ex.exerciseId] && (cache.failedDetails[ex.exerciseId] ?? 0) < 2,
+  )
+  const skipped = chosen.filter((ex) => (cache.failedDetails[ex.exerciseId] ?? 0) >= 2).length
+  console.log(
+    `  ${chosen.length - pending.length - skipped} details cached, ${pending.length} to fetch` +
+      (skipped ? `, ${skipped} skipped (blocked for this plan)…` : '…'),
+  )
   let done = 0
   for (const ex of pending) {
-    const res = await api(`/api/v1/exercises/${ex.exerciseId}`)
-    cache.details[ex.exerciseId] = res.data
+    try {
+      const res = await api(`/api/v1/exercises/${ex.exerciseId}`, {}, { intervalMs: CONFIG.detailIntervalMs })
+      cache.details[ex.exerciseId] = res.data
+      delete cache.failedDetails[ex.exerciseId]
+    } catch (err) {
+      cache.failedDetails[ex.exerciseId] = (cache.failedDetails[ex.exerciseId] ?? 0) + 1
+      console.warn(`  detail unavailable for ${ex.exerciseId} (${ex.name}) — continuing: ${err.message.slice(0, 80)}`)
+    }
     saveCache(cache)
     done++
-    if (done % 20 === 0) console.log(`  ${done}/${pending.length} details fetched…`)
+    if (done % 20 === 0) console.log(`  ${done}/${pending.length} details processed…`)
   }
 }
 

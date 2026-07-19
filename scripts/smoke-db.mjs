@@ -16,6 +16,16 @@ const result = await page.evaluate(async () => {
   // repopulate exercises mid-test.
   await seedDone
 
+  // When the committed catalog exists, seeding must have populated it.
+  const seededCount = await db.exercises.count()
+  const metaRes = await fetch(`${location.origin}/data/exercises-meta.json`)
+  if (metaRes.ok && metaRes.headers.get('content-type')?.includes('json')) {
+    const meta = await metaRes.json()
+    out.seededCatalog = seededCount === meta.count
+  } else {
+    out.seededCatalog = 'skipped (no catalog yet)'
+  }
+
   // clean slate (ephemeral Playwright profile — no real user data here)
   await Promise.all(db.tables.map((t) => t.clear()))
 
@@ -86,7 +96,7 @@ const result = await page.evaluate(async () => {
 })
 
 await browser.close()
-const failed = Object.entries(result).filter(([, v]) => v !== true)
+const failed = Object.entries(result).filter(([, v]) => v !== true && typeof v !== 'string')
 console.log('RESULTS', JSON.stringify(result))
 console.log(consoleLines.filter((l) => l.includes('[repz]')).join('\n'))
 if (failed.length) {

@@ -32,8 +32,11 @@ npm run fetch:exercises            # throttled + resumable; safe to interrupt
 npm run fetch:exercises -- --status   # show cached progress
 ```
 
-Free-tier notes: ~1,000 requests/hour (script self-throttles to 800), media is
-watermarked (URLs referenced as-is; swap via `src/lib/media.ts` when upgrading).
+Free-tier notes (observed): 2,000 requests/month, catalog capped at 200
+exercises, burst limit on the detail endpoint (script paces details at 15s and
+rides out `MITIGATION_REDIRECT` cooloffs). Media is watermarked (URLs referenced
+as-is; swap via `src/lib/media.ts` when upgrading — paid tiers also unlock the
+full ~12.8k-exercise catalog with the same script).
 
 ## Verify
 
