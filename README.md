@@ -20,6 +20,27 @@ npm run build     # type-check + production build (dist/)
 npm run preview   # serve the production build
 ```
 
+## Exercise catalog (build-time pipeline)
+
+The app never calls the ExerciseDB API at runtime — a build-time script fetches
+the catalog and commits it as static JSON (`public/data/`), which seeds IndexedDB
+on first load. The RapidAPI key lives only in a gitignored `.env`.
+
+```sh
+cp .env.example .env  # then paste your RapidAPI key (free Basic plan works)
+npm run fetch:exercises            # throttled + resumable; safe to interrupt
+npm run fetch:exercises -- --status   # show cached progress
+```
+
+Free-tier notes: ~1,000 requests/hour (script self-throttles to 800), media is
+watermarked (URLs referenced as-is; swap via `src/lib/media.ts` when upgrading).
+
+## Verify
+
+```sh
+npm run smoke:db   # end-to-end Dexie layer test in a real browser (needs dev server running)
+```
+
 ## Deploy
 
 Pushes to `main` build and publish to GitHub Pages via

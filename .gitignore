@@ -26,3 +26,7 @@ dist-ssr
 # local build-time secrets (ExerciseDB key etc.)
 .env
 .env.*
+!.env.example
+
+# fetch-script progress cache (resume support; large, machine-local)
+scripts/.exdb-cache.json

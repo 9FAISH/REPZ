@@ -25,7 +25,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,webp,svg,woff2}'],
+        // json covers the committed exercise catalog (public/data/) so the
+        // full app — catalog included — works offline after first load.
+        globPatterns: ['**/*.{js,css,html,png,webp,svg,woff2,json}'],
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
     }),
   ],

@@ -10,6 +10,18 @@ import '@fontsource/archivo/900.css'
 import './styles/tokens.css'
 import './styles/global.css'
 import { router } from './app/routes'
+import { seedExercises } from './db/seed'
+import { db } from './db/db'
+import * as repo from './db/repo'
+
+// Fire-and-forget: refreshes the local exercise catalog from the
+// committed static JSON when its version changes.
+const seedDone = seedExercises()
+
+// Dev-only console/testing handle; stripped from production builds.
+if (import.meta.env.DEV) {
+  ;(window as unknown as Record<string, unknown>).repz = { db, repo, seedDone }
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
