@@ -18,6 +18,11 @@ import * as repo from './db/repo'
 // committed static JSON when its version changes.
 const seedDone = seedExercises()
 
+// This phone holds the only copy of the user's data — ask the browser to
+// exempt IndexedDB from storage-pressure eviction. (Best-effort; installed
+// iOS PWAs already persist, but this hardens browser-tab usage.)
+void navigator.storage?.persist?.().catch(() => {})
+
 // Dev-only console/testing handle; stripped from production builds.
 if (import.meta.env.DEV) {
   ;(window as unknown as Record<string, unknown>).repz = { db, repo, seedDone }

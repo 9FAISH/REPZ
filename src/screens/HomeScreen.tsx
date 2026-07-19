@@ -1,102 +1,146 @@
 import { useNavigate } from 'react-router-dom'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { getProfile, dayTotals, listWeighIns, activityDates } from '../db/repo'
+import {
+  proteinTargetG,
+  weightTrendKgPerWeek,
+  onPace,
+  currentStreak,
+  todayDayType,
+  DAY_TYPE_LABELS,
+} from '../lib/stats'
+import { KiloHero } from '../components/KiloHero'
+import { useTodayKey } from '../lib/useTodayKey'
+import type { DayType } from '../db/types'
 import './HomeScreen.css'
 
-// Phase 0: static demo data mirroring the design file. Real data
-// arrives with the Dexie profile/session layer in Phases 1–2.
-const demo = {
-  streakDays: 12,
-  speech: '12 days straight. Push day — let’s eat.',
-  sessionName: 'PUSH A',
-  sessionMinutes: 52,
-  slotsFilled: 3,
-  slotsTotal: 5,
-  proteinEaten: 132,
-  proteinTarget: 165,
-  weightTrend: '+0.24',
-}
-
 function todayLine(): string {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-  }).replace(',', ' ·')
+  return new Date()
+    .toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
+    .replace(',', ' ·')
 }
 
-function greeting(): string {
+function greetingWord(): string {
   const h = new Date().getHours()
-  if (h < 12) return 'Morning.'
-  if (h < 18) return 'Afternoon.'
-  return 'Evening.'
+  if (h < 12) return 'Morning'
+  if (h < 18) return 'Afternoon'
+  return 'Evening'
 }
+
+const DAY_SPEECH: Record<DayType, string> = {
+  push: 'Push day — let’s eat.',
+  pull: 'Pull day. Row like you mean it.',
+  legs: 'Leg day. No skipping.',
+  upper: 'Upper day. Full send up top.',
+  lower: 'Lower day. Squats are calling.',
+  full: 'Full body. Everything works today.',
+}
+
+function kiloSpeech(dayType: DayType | null, streak: number): string {
+  const daily = dayType ? DAY_SPEECH[dayType] : 'Rest day. Growth happens now.'
+  return streak >= 2 ? `${streak} days straight. ${daily}` : daily
+}
+
+// Slot counts per day type come alive in Phase 3's builder; the dashboard
+// shows the day's empty slot bar until then.
+const SLOT_COUNT = 5
 
 export function HomeScreen() {
   const navigate = useNavigate()
-  const pct = Math.round((demo.proteinEaten / demo.proteinTarget) * 100)
+  const dateKey = useTodayKey()
+  const profile = useLiveQuery(getProfile)
+  const totals = useLiveQuery(() => dayTotals(dateKey), [dateKey])
+  const weighIns = useLiveQuery(listWeighIns, [])
+  const activity = useLiveQuery(activityDates, [])
+
+  if (!profile) return null // AppShell guard redirects when there's no profile
+
+  const streak = activity ? currentStreak(activity) : 0
+  const dayType = todayDayType(profile.split)
+  const proteinTarget = proteinTargetG(profile)
+  const proteinEaten = Math.round(totals?.proteinG ?? 0)
+  const proteinPct = Math.min(100, Math.round((proteinEaten / proteinTarget) * 100))
+  const trend = weighIns ? weightTrendKgPerWeek(weighIns) : null
+  const paced = onPace(trend, profile.goal)
 
   return (
     <div className="screen">
       <header className="home-header">
         <div>
           <div className="home-date">{todayLine()}</div>
-          <div className="home-greeting">{greeting()}</div>
+          <div className="home-greeting">
+            {greetingWord()}
+            {profile.name ? `, ${profile.name}.` : '.'}
+          </div>
         </div>
-        <div className="pill-accent">{demo.streakDays}-DAY STREAK</div>
+        {streak >= 2 && <div className="pill-accent">{streak}-DAY STREAK</div>}
       </header>
 
-      <section className="card-lg home-hero">
-        <div className="home-kilo-sprite" aria-label="Kilo, your gym buddy" />
-        <div className="home-speech">
-          <div className="home-speech-arrow" />
-          <div className="home-speech-text">{demo.speech}</div>
-          <div className="home-speech-byline">— Kilo, your spotter</div>
-        </div>
-      </section>
+      <KiloHero speech={kiloSpeech(dayType, streak)} />
 
-      <section className="home-workout-card">
-        <div className="home-workout-top">
-          <div className="home-workout-label">TODAY · {demo.sessionName}</div>
-          <div className="home-workout-time">~{demo.sessionMinutes} min</div>
-        </div>
-        <div className="home-workout-count">
-          {demo.slotsFilled} of {demo.slotsTotal} slots filled
-        </div>
-        <div className="home-slotbar">
-          {Array.from({ length: demo.slotsTotal }, (_, i) => (
-            <div
-              key={i}
-              className={`home-slotseg${i < demo.slotsFilled ? ' home-slotseg-filled' : ''}`}
-            />
-          ))}
-        </div>
-        <div className="home-workout-actions">
-          <button className="btn-primary home-start" onClick={() => navigate('/train')}>
-            Start workout
-          </button>
-          <button className="btn-secondary home-edit" onClick={() => navigate('/train')}>
-            Edit slots
-          </button>
-        </div>
-      </section>
+      {dayType ? (
+        <section className="home-workout-card">
+          <div className="home-workout-top">
+            <div className="home-workout-label">TODAY · {DAY_TYPE_LABELS[dayType].toUpperCase()}</div>
+            <div className="home-workout-time">{profile.daysPerWeek} days/wk</div>
+          </div>
+          <div className="home-workout-count">0 of {SLOT_COUNT} slots filled</div>
+          <div className="home-slotbar">
+            {Array.from({ length: SLOT_COUNT }, (_, i) => (
+              <div key={i} className="home-slotseg" />
+            ))}
+          </div>
+          <div className="home-workout-actions">
+            <button className="btn-primary home-start" onClick={() => navigate('/train')}>
+              Build workout
+            </button>
+          </div>
+        </section>
+      ) : (
+        <section className="home-rest-card">
+          <div className="home-workout-label home-rest-label">REST DAY</div>
+          <div className="home-rest-text">
+            Recovery is where the growth happens. Eat your protein, get your steps in.
+          </div>
+        </section>
+      )}
 
       <section className="home-stats">
         <button className="home-stat-card" onClick={() => navigate('/food')}>
           <div className="section-label">PROTEIN</div>
           <div className="home-stat-value numeral">
-            {demo.proteinEaten}
-            <span className="home-stat-unit"> / {demo.proteinTarget} g</span>
+            {proteinEaten}
+            <span className="home-stat-unit"> / {proteinTarget} g</span>
           </div>
           <div className="home-protein-track">
-            <div className="home-protein-fill" style={{ width: `${pct}%` }} />
+            <div className="home-protein-fill" style={{ width: `${proteinPct}%` }} />
           </div>
         </button>
         <button className="home-stat-card" onClick={() => navigate('/progress')}>
           <div className="section-label">WEIGHT TREND</div>
-          <div className="home-stat-value numeral">
-            {demo.weightTrend}
-            <span className="home-stat-unit"> kg/wk</span>
-          </div>
-          <div className="home-stat-note">On pace for the bulk ↗</div>
+          {trend != null ? (
+            <>
+              <div className="home-stat-value numeral">
+                {Math.abs(trend) < 0.005 ? '0.00' : `${trend > 0 ? '+' : ''}${trend.toFixed(2)}`}
+                <span className="home-stat-unit"> kg/wk</span>
+              </div>
+              <div className={`home-stat-note${paced ? '' : ' home-stat-note-muted'}`}>
+                {paced
+                  ? `On pace for the ${profile.goal} ↗`
+                  : Math.abs(trend) <= 0.02
+                    ? 'Holding steady'
+                    : 'Drifting off pace'}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="home-stat-value numeral">
+                {weighIns?.length ? weighIns[weighIns.length - 1].weightKg.toFixed(1) : profile.weightKg.toFixed(1)}
+                <span className="home-stat-unit"> kg</span>
+              </div>
+              <div className="home-stat-note home-stat-note-muted">Log daily weigh-ins for a trend</div>
+            </>
+          )}
         </button>
       </section>
     </div>

@@ -30,6 +30,7 @@ export type DayType = 'full' | 'upper' | 'lower' | 'push' | 'pull' | 'legs'
 /** Singleton user profile (id is always 'main') — no accounts, local only. */
 export interface Profile {
   id: 'main'
+  name?: string
   sex: Sex
   age: number
   heightCm: number

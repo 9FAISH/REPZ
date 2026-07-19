@@ -1,5 +1,6 @@
 import { createHashRouter } from 'react-router-dom'
 import { AppShell } from './AppShell'
+import { SetupScreen } from '../screens/setup/SetupScreen'
 import { HomeScreen } from '../screens/HomeScreen'
 import { TrainScreen } from '../screens/TrainScreen'
 import { FoodScreen } from '../screens/FoodScreen'
@@ -7,6 +8,7 @@ import { ProgressScreen } from '../screens/ProgressScreen'
 
 // Hash routing keeps deep links working on GitHub Pages (no server rewrites).
 export const router = createHashRouter([
+  { path: '/setup', element: <SetupScreen /> },
   {
     path: '/',
     element: <AppShell />,

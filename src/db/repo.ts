@@ -41,6 +41,18 @@ export async function saveProfile(data: Omit<Profile, 'id' | 'createdAt' | 'upda
 
 export const hasProfile = async () => (await db.profile.count()) > 0
 
+/** First-run finalization: profile + equipment in ONE transaction, so an
+ *  interrupt can never leave a profile without an equipment inventory
+ *  (setup is unreachable once a profile exists). */
+export const completeSetup = (
+  profileData: Omit<Profile, 'id' | 'createdAt' | 'updatedAt'>,
+  equipment: EquipmentItem[],
+) =>
+  db.transaction('rw', db.profile, db.equipment, async () => {
+    await saveProfile(profileData)
+    await replaceEquipment(equipment)
+  })
+
 // ── Equipment ──
 export const listEquipment = () => db.equipment.toArray()
 
@@ -160,6 +172,22 @@ export async function dayTotals(date = todayKey()) {
 }
 
 export const deleteFood = (id: number) => db.nutritionLog.delete(id)
+
+// ── Activity (streak sources) ──
+/** Distinct local days ('YYYY-MM-DD') with any logged activity:
+ *  a logged set, a weigh-in, or a food entry. */
+export async function activityDates(): Promise<Set<string>> {
+  const [sets, weighs, foods] = await Promise.all([
+    db.setLogs.toArray(),
+    db.weightLog.toArray(),
+    db.nutritionLog.toArray(),
+  ])
+  const days = new Set<string>()
+  for (const s of sets) days.add(todayKey(new Date(s.loggedAt)))
+  for (const w of weighs) days.add(w.date)
+  for (const f of foods) days.add(f.date)
+  return days
+}
 
 // ── KV (dataset version, adaptive targets, misc flags) ──
 export const kvGet = async <T>(key: string): Promise<T | undefined> =>

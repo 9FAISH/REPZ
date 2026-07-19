@@ -17,54 +17,6 @@
   letter-spacing: var(--ls-tight);
 }
 
-/* ── Kilo hero ── */
-.home-hero {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* 5-frame sprite sheet; the box keeps the frame aspect ratio
-   (394.8×500 ≈ 0.79) so the mascot isn't distorted. */
-.home-kilo-sprite {
-  flex-shrink: 0;
-  width: 98px;
-  height: 124px;
-  background: url('../assets/mascot/kilo-press-sprite.webp') 0 0 / 500% 100% no-repeat;
-  animation: kf5 1.5s steps(5) infinite;
-}
-
-.home-speech {
-  flex: 1;
-  background: var(--elevated);
-  border-radius: var(--r-btn);
-  padding: 12px 14px;
-  position: relative;
-}
-
-.home-speech-arrow {
-  position: absolute;
-  left: -6px;
-  top: 38px;
-  width: 12px;
-  height: 12px;
-  background: var(--elevated);
-  transform: rotate(45deg);
-}
-
-.home-speech-text {
-  font-size: var(--fs-base);
-  font-weight: 700;
-  line-height: 1.45;
-}
-
-.home-speech-byline {
-  font-size: var(--fs-label);
-  color: var(--text-muted);
-  margin-top: 5px;
-  font-weight: 600;
-}
-
 /* ── Today's workout ── */
 .home-workout-card {
   background: linear-gradient(135deg, var(--surface), #131a1c);
@@ -132,6 +84,25 @@
   font-size: var(--fs-base);
 }
 
+/* ── Rest day ── */
+.home-rest-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card-lg);
+  padding: var(--pad-card-lg);
+}
+
+.home-rest-label {
+  color: var(--text-muted);
+}
+
+.home-rest-text {
+  font-size: var(--fs-body);
+  color: var(--text-body);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
 /* ── Quick stats ── */
 .home-stats {
   display: grid;
@@ -179,4 +150,8 @@
   color: var(--accent);
   font-weight: 700;
   margin-top: 10px;
+}
+
+.home-stat-note-muted {
+  color: var(--text-faint);
 }
