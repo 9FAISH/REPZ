@@ -1,0 +1,182 @@
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.home-date {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.home-greeting {
+  font-size: var(--fs-title);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+}
+
+/* ── Kilo hero ── */
+.home-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 5-frame sprite sheet; the box keeps the frame aspect ratio
+   (394.8×500 ≈ 0.79) so the mascot isn't distorted. */
+.home-kilo-sprite {
+  flex-shrink: 0;
+  width: 98px;
+  height: 124px;
+  background: url('../assets/mascot/kilo-press-sprite.webp') 0 0 / 500% 100% no-repeat;
+  animation: kf5 1.5s steps(5) infinite;
+}
+
+.home-speech {
+  flex: 1;
+  background: var(--elevated);
+  border-radius: var(--r-btn);
+  padding: 12px 14px;
+  position: relative;
+}
+
+.home-speech-arrow {
+  position: absolute;
+  left: -6px;
+  top: 38px;
+  width: 12px;
+  height: 12px;
+  background: var(--elevated);
+  transform: rotate(45deg);
+}
+
+.home-speech-text {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.home-speech-byline {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+/* ── Today's workout ── */
+.home-workout-card {
+  background: linear-gradient(135deg, var(--surface), #131a1c);
+  border: 1.5px solid var(--accent-border-40);
+  border-radius: var(--r-card-lg);
+  padding: var(--pad-card-lg);
+  box-shadow: var(--accent-glow);
+}
+
+.home-workout-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-workout-label {
+  font-size: var(--fs-label);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.home-workout-time {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.home-workout-count {
+  font-size: var(--fs-card-title);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+  margin-top: 8px;
+}
+
+.home-slotbar {
+  display: flex;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.home-slotseg {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--elevated);
+}
+
+.home-slotseg-filled {
+  background: var(--accent);
+}
+
+.home-workout-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.home-start {
+  flex: 2;
+}
+
+.home-edit {
+  flex: 1;
+  font-size: var(--fs-base);
+}
+
+/* ── Quick stats ── */
+.home-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.home-stat-card {
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: var(--pad-card);
+  cursor: pointer;
+}
+
+.home-stat-value {
+  font-size: var(--fs-title);
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.home-stat-unit {
+  font-size: var(--fs-base);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.home-protein-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--elevated);
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.home-protein-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+.home-stat-note {
+  font-size: var(--fs-caption);
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 10px;
+}

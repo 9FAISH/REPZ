@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07080A;font-family:'Archivo',system-ui,sans-serif}
+a{color:#2CE8F5;text-decoration:none}a:hover{color:#8AF5FC}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes kbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes kin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes kf3{to{background-position-x:150%}}
+@keyframes kf5{to{background-position-x:125%}}
+@keyframes kf6{to{background-position-x:120%}}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:64px;padding:56px 40px;background:radial-gradient(1100px 700px at 68% 12%, #0D1117, #07080A);flex-wrap:wrap">
+  <div style="width:300px;display:flex;flex-direction:column;gap:22px;color:#F3F5F7">
+    <div>
+      <div style="font-size:44px;font-weight:900;letter-spacing:-0.03em;line-height:1">REPZ<span style="color:#2CE8F5">.</span></div>
+      <div style="margin-top:8px;font-size:13px;color:#8B93A0;line-height:1.5">Personal trainer + diet tracker · local-first PWA · one-handed logging</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#5A616C">SYSTEM</div>
+      <div style="display:flex;gap:8px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2CE8F5" title="Accent"></div>
+        <div style="width:34px;height:34px;border-radius:10px;background:#0B0C0F;border:1px solid rgba(255,255,255,0.12)" title="Bg"></div>
+        <div style="width:34px;height:34px;border-radius:10px;background:#15171B;border:1px solid rgba(255,255,255,0.1)" title="Surface"></div>
+        <div style="width:34px;height:34px;border-radius:10px;background:#1E2127;border:1px solid rgba(255,255,255,0.1)" title="Elevated"></div>
+        <div style="width:34px;height:34px;border-radius:10px;background:#FFB02C" title="Warn"></div>
+      </div>
+      <div style="font-size:12px;color:#8B93A0;line-height:1.6">Archivo 900 for numerals &amp; display, 500–600 for UI. 20px card radius, 52px+ tap targets, dashed = open slot, cyan = locked/active.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#5A616C">JUMP TO SCREEN</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <sc-for list="{{ jumpChips }}" as="j" hint-placeholder-count="10">
+          <button onClick="{{ j.fn }}" style="{{ j.style }}">{{ j.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#5A616C;line-height:1.6;border-top:1px solid rgba(255,255,255,0.07);padding-top:16px">Tap through the phone — it's fully interactive. Home, builder and live-workout layout variants live in the <b style="color:#8B93A0">Tweaks</b> panel. Kilo reacts across Home, exercise demos, the rest timer and the collection shelf.</div>
+  </div>
+
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+    <div style="height:100%;position:relative;background:#0B0C0F;color:#F3F5F7;font-family:'Archivo',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+
+      <div style="flex:1;overflow-y:auto;padding:70px 18px 120px;box-sizing:border-box">
+
+        <!-- ═══════════ ONBOARDING ═══════════ -->
+        <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:20px;animation:kin .3s ease">
+            <div style="display:flex;gap:6px;margin-top:6px">
+              <sc-for list="{{ obDots }}" as="d" hint-placeholder-count="4">
+                <div style="{{ d.style }}"></div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ ob0 }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.1">Who's lifting?</div>
+              <div style="font-size:13px;color:#8B93A0;margin-top:-10px">Kilo needs the basics to set your targets.</div>
+              <div style="display:flex;gap:10px">
+                <button onClick="{{ sexM }}" style="{{ sexMStyle }}">Male</button>
+                <button onClick="{{ sexF }}" style="{{ sexFStyle }}">Female</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ obFields }}" as="f" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;justify-content:space-between;background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:14px 16px">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#8B93A0;width:64px">{{ f.label }}</div>
+                    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:32px;font-weight:900;font-variant-numeric:tabular-nums">{{ f.value }}</span><span style="font-size:13px;color:#8B93A0;font-weight:600">{{ f.unit }}</span></div>
+                    <div style="display:flex;gap:8px">
+                      <button onClick="{{ f.down }}" style="width:48px;height:48px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:22px;font-weight:700;cursor:pointer">−</button>
+                      <button onClick="{{ f.up }}" style="width:48px;height:48px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#2CE8F5;font-size:22px;font-weight:700;cursor:pointer">+</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ ob1 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.1">Pick your mission.</div>
+              <div style="font-size:13px;color:#8B93A0;margin-top:-10px">This sets calories, protein and how the app adapts.</div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ goalCards }}" as="g" hint-placeholder-count="2">
+                  <button onClick="{{ g.pick }}" style="{{ g.style }}">
+                    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:22px;font-weight:900;letter-spacing:0.02em">{{ g.title }}</span><span style="{{ g.tagStyle }}">{{ g.tag }}</span></div>
+                    <div style="font-size:13px;color:#8B93A0;text-align:left;margin-top:6px;line-height:1.5">{{ g.blurb }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ ob2 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.1">Choose a split.</div>
+              <div style="font-size:13px;color:#8B93A0;margin-top:-10px">You can swap any time — history carries over.</div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ splitCards }}" as="sp" hint-placeholder-count="3">
+                  <button onClick="{{ sp.pick }}" style="{{ sp.style }}">
+                    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:17px;font-weight:800">{{ sp.name }}</span><span style="{{ sp.daysStyle }}">{{ sp.days }}</span></div>
+                    <div style="font-size:12.5px;color:#8B93A0;text-align:left;margin-top:5px;line-height:1.5">{{ sp.blurb }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ ob3 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.1">What's in your gym?</div>
+              <div style="font-size:13px;color:#8B93A0;margin-top:-10px">Only gear you switch on shows up in the workout builder.</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <sc-for list="{{ equipList }}" as="e" hint-placeholder-count="8">
+                  <button onClick="{{ e.toggle }}" style="{{ e.style }}">
+                    <span style="font-size:14px;font-weight:700">{{ e.name }}</span>
+                    <span style="{{ e.pillStyle }}">{{ e.pill }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display:flex;gap:10px;margin-top:6px">
+              <sc-if value="{{ obCanBack }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ obBack }}" style="flex:1;padding:17px;border-radius:16px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Back</button>
+              </sc-if>
+              <button onClick="{{ obNext }}" style="flex:2;padding:17px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:15px;font-weight:900;letter-spacing:0.02em;cursor:pointer;font-family:inherit">{{ obNextLabel }}</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ HOME ═══════════ -->
+        <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+              <div>
+                <div style="font-size:12px;color:#8B93A0;font-weight:600">Thursday · Jul 18</div>
+                <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em">Evening, Dex.</div>
+              </div>
+              <div style="padding:8px 12px;border-radius:999px;background:rgba(44,232,245,0.12);border:1px solid rgba(44,232,245,0.35);color:#2CE8F5;font-size:11px;font-weight:900;letter-spacing:0.1em">12-DAY STREAK</div>
+            </div>
+            <sc-if value="{{ homeHero }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:18px;display:flex;align-items:center;gap:16px">
+                <div style="flex-shrink:0;width:86px;height:124px;background:url('assets/kilo-celebrate.png') 0 0 / 500% 100% no-repeat;animation:kf5 1.5s steps(5) infinite"></div>
+                <div style="flex:1;background:#1E2127;border-radius:16px;padding:12px 14px;position:relative">
+                  <div style="position:absolute;left:-6px;top:38px;width:12px;height:12px;background:#1E2127;transform:rotate(45deg)"></div>
+                  <div style="font-size:14px;font-weight:700;line-height:1.45">{{ speech }}</div>
+                  <div style="font-size:11px;color:#8B93A0;margin-top:5px;font-weight:600">— Kilo, your spotter</div>
+                </div>
+              </div>
+            </sc-if>
+            <div style="background:linear-gradient(135deg,#15171B, #131A1C);border:1.5px solid rgba(44,232,245,0.4);border-radius:22px;padding:18px;box-shadow:0 0 32px rgba(44,232,245,0.07)">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#2CE8F5">TODAY · PUSH A</div>
+                <div style="font-size:12px;color:#8B93A0;font-weight:600">~52 min</div>
+              </div>
+              <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em;margin-top:8px">{{ filledCount }} of 5 slots filled</div>
+              <div style="display:flex;gap:5px;margin-top:12px">
+                <sc-for list="{{ slotBar }}" as="sb" hint-placeholder-count="5">
+                  <div style="{{ sb.style }}"></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:16px">
+                <button onClick="{{ goLive }}" style="flex:2;padding:16px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">Start workout</button>
+                <button onClick="{{ goTrain }}" style="flex:1;padding:16px;border-radius:16px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Edit slots</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <button onClick="{{ goFood }}" style="text-align:left;background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:16px;cursor:pointer;color:#F3F5F7;font-family:inherit">
+                <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#8B93A0">PROTEIN</div>
+                <div style="font-size:26px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:4px">132<span style="font-size:14px;color:#8B93A0;font-weight:700"> / 165 g</span></div>
+                <div style="height:6px;border-radius:3px;background:#1E2127;margin-top:10px;overflow:hidden"><div style="width:80%;height:100%;border-radius:3px;background:#2CE8F5"></div></div>
+              </button>
+              <button onClick="{{ goProgress }}" style="text-align:left;background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:16px;cursor:pointer;color:#F3F5F7;font-family:inherit">
+                <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#8B93A0">WEIGHT TREND</div>
+                <div style="font-size:26px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:4px">+0.24<span style="font-size:14px;color:#8B93A0;font-weight:700"> kg/wk</span></div>
+                <div style="font-size:11.5px;color:#2CE8F5;font-weight:700;margin-top:10px">On pace for the bulk ↗</div>
+              </button>
+            </div>
+            <sc-if value="{{ homeCompact }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ goShelf }}" style="display:flex;align-items:center;gap:12px;background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:12px 16px;cursor:pointer;color:#F3F5F7;font-family:inherit;text-align:left">
+                <img src="assets/kilo-var-0.png" style="height:48px;flex-shrink:0" alt="Kilo">
+                <div style="flex:1"><div style="font-size:13.5px;font-weight:700">{{ speech }}</div><div style="font-size:11px;color:#8B93A0;margin-top:2px">Kilo · tap for the collection</div></div>
+              </button>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ TRAIN / BUILDER ═══════════ -->
+        <sc-if value="{{ isTrain }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+              <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em">Push A</div>
+              <button onClick="{{ goLibrary }}" style="padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Saved workouts</button>
+            </div>
+            <div style="font-size:12.5px;color:#8B93A0;line-height:1.5;margin-top:-6px">One exercise per muscle slot. Picking one <b style="color:#F3F5F7">locks</b> the slot — tap Swap to reopen it.</div>
+            <div style="{{ slotWrapStyle }}">
+              <sc-for list="{{ slotsList }}" as="sl" hint-placeholder-count="5">
+                <div style="{{ sl.style }}">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="font-size:10.5px;font-weight:900;letter-spacing:0.13em;color:#8B93A0">{{ sl.regionU }}</div>
+                    <sc-if value="{{ sl.locked }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:center;gap:5px;color:#2CE8F5;font-size:10px;font-weight:900;letter-spacing:0.1em"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="0.75" y="5" width="8.5" height="6.5" rx="1.8" fill="#2CE8F5"></rect><path d="M2.5 5V3.5a2.5 2.5 0 015 0V5" stroke="#2CE8F5" stroke-width="1.5" fill="none"></path></svg>LOCKED</div>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ sl.locked }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:8px;display:flex;gap:11px;align-items:flex-start">
+                      <div style="width:52px;height:52px;border-radius:12px;background:#FDFDFD;flex-shrink:0;overflow:hidden">
+                        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ sl.imgId }}" shape="rect" fit="cover" data-compact="1" src="{{ sl.img }}" placeholder="+" hint-size="52px,52px"></x-import>
+                      </div>
+                      <div style="flex:1;min-width:0">
+                      <div style="font-size:17px;font-weight:800;letter-spacing:-0.01em">{{ sl.exName }}</div>
+                      <div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">
+                        <span style="font-size:11px;font-weight:700;color:#04262B;background:#2CE8F5;border-radius:6px;padding:3px 7px">3 × 8–12</span>
+                        <span style="font-size:11px;font-weight:600;color:#8B93A0;background:#1E2127;border-radius:6px;padding:3px 7px">{{ sl.eq }}</span>
+                        <button onClick="{{ sl.swap }}" style="margin-left:auto;padding:8px 13px;border-radius:10px;background:#1E2127;border:1px solid rgba(255,255,255,0.1);color:#F3F5F7;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Swap</button>
+                      </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ sl.open }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ sl.pick }}" style="margin-top:8px;width:100%;padding:15px;border-radius:14px;background:transparent;border:1.5px dashed rgba(255,255,255,0.18);color:#8B93A0;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center">+ Pick exercise</button>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5A616C;font-weight:600"><div style="width:7px;height:7px;border-radius:50%;background:#FFB02C"></div>{{ hiddenNote }}</div>
+            <button onClick="{{ goLive }}" style="padding:17px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">Start workout · {{ filledCount }} exercises</button>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ EXERCISE DETAIL ═══════════ -->
+        <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <button onClick="{{ detailBack }}" style="align-self:flex-start;padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">← Back</button>
+            <div style="height:230px;border-radius:20px;background:radial-gradient(400px 180px at 50% 100%, #191D22, #15171B);border:1px solid rgba(255,255,255,0.07);display:flex;align-items:flex-end;justify-content:center;position:relative;overflow:hidden">
+              <div style="{{ demoStyle }}"></div>
+              <div style="position:absolute;top:12px;left:14px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#5A616C">KILO DEMO · LOOP</div>
+            </div>
+            <div style="display:flex;gap:13px;align-items:flex-start">
+              <div style="width:64px;height:64px;border-radius:14px;background:#FDFDFD;flex-shrink:0;overflow:hidden">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ dImgId }}" shape="rect" fit="cover" data-compact="1" src="{{ dImg }}" placeholder="+" hint-size="64px,64px"></x-import>
+              </div>
+              <div style="flex:1;min-width:0">
+              <div style="font-size:25px;font-weight:900;letter-spacing:-0.02em">{{ dName }}</div>
+              <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+                <span style="font-size:11px;font-weight:800;color:#2CE8F5;background:rgba(44,232,245,0.12);border:1px solid rgba(44,232,245,0.3);border-radius:6px;padding:4px 8px">{{ dRegion }}</span>
+                <span style="font-size:11px;font-weight:600;color:#8B93A0;background:#1E2127;border-radius:6px;padding:4px 8px">{{ dEquip }}</span>
+                <span style="font-size:11px;font-weight:600;color:#8B93A0;background:#1E2127;border-radius:6px;padding:4px 8px">Start ~{{ dStart }} kg</span>
+              </div>
+              </div>
+            </div>
+            <sc-if value="{{ dCanFill }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ dFill }}" style="padding:16px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">Fill slot with this →</button>
+            </sc-if>
+            <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:16px">
+              <div style="font-size:11px;font-weight:900;letter-spacing:0.13em;color:#8B93A0;margin-bottom:12px">HOW TO</div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ dSteps }}" as="st" hint-placeholder-count="3">
+                  <div style="display:flex;gap:11px;align-items:flex-start">
+                    <div style="width:22px;height:22px;border-radius:8px;background:#1E2127;color:#2CE8F5;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ st.n }}</div>
+                    <div style="font-size:13.5px;line-height:1.5;color:#D5DAE0">{{ st.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:16px">
+              <div style="font-size:11px;font-weight:900;letter-spacing:0.13em;color:#2CE8F5;margin-bottom:12px">FORM TIPS</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ dTips }}" as="tp" hint-placeholder-count="2">
+                  <div style="display:flex;gap:10px;align-items:flex-start"><div style="color:#2CE8F5;font-weight:900;font-size:13px">✓</div><div style="font-size:13.5px;line-height:1.5;color:#D5DAE0">{{ tp.text }}</div></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:rgba(255,176,44,0.07);border:1px solid rgba(255,176,44,0.3);border-radius:20px;padding:16px">
+              <div style="font-size:11px;font-weight:900;letter-spacing:0.13em;color:#FFB02C;margin-bottom:12px">WATCH OUT</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ dMistakes }}" as="mk" hint-placeholder-count="2">
+                  <div style="display:flex;gap:10px;align-items:flex-start"><div style="color:#FFB02C;font-weight:900;font-size:13px">!</div><div style="font-size:13.5px;line-height:1.5;color:#D5DAE0">{{ mk.text }}</div></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ LIVE WORKOUT ═══════════ -->
+        <sc-if value="{{ isLive }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+              <button onClick="{{ goHome }}" style="padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✕ End</button>
+              <div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#2CE8F5">PUSH A · LIVE</div>
+              <button onClick="{{ toggleNotif }}" style="padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Widget</button>
+            </div>
+            <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:2px">
+              <sc-for list="{{ liveExs }}" as="lx" hint-placeholder-count="3">
+                <button onClick="{{ lx.pick }}" style="{{ lx.style }}">{{ lx.name }}</button>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em;line-height:1.15">{{ liveExName }}</div>
+              <div style="font-size:13px;color:#8B93A0;font-weight:600;margin-top:4px">{{ liveSetLabel }} · {{ liveHype }}</div>
+            </div>
+            <sc-if value="{{ liveFocus }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:16px;text-align:center">
+                  <div style="font-size:10.5px;font-weight:900;letter-spacing:0.13em;color:#8B93A0">WEIGHT</div>
+                  <div style="font-size:44px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;margin:4px 0">{{ weightStr }}<span style="font-size:16px;color:#8B93A0;font-weight:700"> kg</span></div>
+                  <div style="display:flex;gap:8px;justify-content:center">
+                    <button onClick="{{ wDown }}" style="width:56px;height:52px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:20px;font-weight:800;cursor:pointer">−</button>
+                    <button onClick="{{ wUp }}" style="width:56px;height:52px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#2CE8F5;font-size:20px;font-weight:800;cursor:pointer">+</button>
+                  </div>
+                </div>
+                <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:16px;text-align:center">
+                  <div style="font-size:10.5px;font-weight:900;letter-spacing:0.13em;color:#8B93A0">REPS</div>
+                  <div style="font-size:44px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;margin:4px 0">{{ reps }}</div>
+                  <div style="display:flex;gap:8px;justify-content:center">
+                    <button onClick="{{ rDown }}" style="width:56px;height:52px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:20px;font-weight:800;cursor:pointer">−</button>
+                    <button onClick="{{ rUp }}" style="width:56px;height:52px;border-radius:14px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#2CE8F5;font-size:20px;font-weight:800;cursor:pointer">+</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ liveCompact }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <div style="display:flex;align-items:center;gap:8px"><button onClick="{{ wDown }}" style="width:44px;height:44px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:18px;font-weight:800;cursor:pointer">−</button><div style="text-align:center;min-width:74px"><div style="font-size:26px;font-weight:900;font-variant-numeric:tabular-nums">{{ weightStr }}</div><div style="font-size:10px;color:#8B93A0;font-weight:800;letter-spacing:0.1em">KG</div></div><button onClick="{{ wUp }}" style="width:44px;height:44px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#2CE8F5;font-size:18px;font-weight:800;cursor:pointer">+</button></div>
+                <div style="width:1px;height:44px;background:rgba(255,255,255,0.08)"></div>
+                <div style="display:flex;align-items:center;gap:8px"><button onClick="{{ rDown }}" style="width:44px;height:44px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:18px;font-weight:800;cursor:pointer">−</button><div style="text-align:center;min-width:44px"><div style="font-size:26px;font-weight:900;font-variant-numeric:tabular-nums">{{ reps }}</div><div style="font-size:10px;color:#8B93A0;font-weight:800;letter-spacing:0.1em">REPS</div></div><button onClick="{{ rUp }}" style="width:44px;height:44px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#2CE8F5;font-size:18px;font-weight:800;cursor:pointer">+</button></div>
+              </div>
+            </sc-if>
+            <div>
+              <div style="font-size:11px;font-weight:900;letter-spacing:0.13em;color:#8B93A0;margin-bottom:8px">HOW HARD WAS THAT LAST REP?</div>
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ rirA }}" style="{{ rirAStyle }}">Could do more<span style="{{ rirSub }}">2+ in tank</span></button>
+                <button onClick="{{ rirB }}" style="{{ rirBStyle }}">Solid<span style="{{ rirSub }}">1 left</span></button>
+                <button onClick="{{ rirC }}" style="{{ rirCStyle }}">Barely<span style="{{ rirSub }}">0 left</span></button>
+              </div>
+            </div>
+            <button onClick="{{ logSet }}" style="padding:18px;border-radius:18px;background:#2CE8F5;border:none;color:#04262B;font-size:16px;font-weight:900;letter-spacing:0.01em;cursor:pointer;font-family:inherit">Log set · start rest</button>
+            <sc-if value="{{ hasLogged }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:6px 16px">
+                <sc-for list="{{ loggedRows }}" as="lr" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+                    <div style="font-size:11px;font-weight:900;color:#5A616C;width:38px">SET {{ lr.set }}</div>
+                    <div style="font-size:15px;font-weight:800;font-variant-numeric:tabular-nums">{{ lr.kg }} kg × {{ lr.reps }}</div>
+                    <div style="{{ lr.tagStyle }}">{{ lr.rir }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ FOOD ═══════════ -->
+        <sc-if value="{{ isFood }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em;margin-top:4px">Fuel</div>
+            <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:18px;display:flex;align-items:center;gap:18px">
+              <svg width="132" height="132" viewBox="0 0 132 132">
+                <circle cx="66" cy="66" r="58" fill="none" stroke="#1E2127" stroke-width="10"></circle>
+                <circle cx="66" cy="66" r="58" fill="none" stroke="#2CE8F5" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ calDash }}" transform="rotate(-90 66 66)"></circle>
+                <circle cx="66" cy="66" r="42" fill="none" stroke="#1E2127" stroke-width="10"></circle>
+                <circle cx="66" cy="66" r="42" fill="none" stroke="#8AF5FC" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ proDash }}" transform="rotate(-90 66 66)"></circle>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div><div style="display:flex;align-items:center;gap:7px"><div style="width:9px;height:9px;border-radius:3px;background:#2CE8F5"></div><span style="font-size:11px;font-weight:800;letter-spacing:0.1em;color:#8B93A0">CALORIES</span></div><div style="font-size:24px;font-weight:900;font-variant-numeric:tabular-nums">1,840<span style="font-size:13px;color:#8B93A0;font-weight:700"> / 2,650</span></div></div>
+                <div><div style="display:flex;align-items:center;gap:7px"><div style="width:9px;height:9px;border-radius:3px;background:#8AF5FC"></div><span style="font-size:11px;font-weight:800;letter-spacing:0.1em;color:#8B93A0">PROTEIN</span></div><div style="font-size:24px;font-weight:900;font-variant-numeric:tabular-nums">132<span style="font-size:13px;color:#8B93A0;font-weight:700"> / 165 g</span></div></div>
+              </div>
+            </div>
+            <div style="background:rgba(44,232,245,0.07);border:1px solid rgba(44,232,245,0.35);border-radius:20px;padding:16px">
+              <div style="display:flex;align-items:center;gap:8px"><div style="padding:4px 9px;border-radius:6px;background:#2CE8F5;color:#04262B;font-size:10px;font-weight:900;letter-spacing:0.1em">AUTO-ADJUSTED</div><div style="font-size:11px;color:#8B93A0;font-weight:600">2 days ago</div></div>
+              <div style="font-size:13.5px;line-height:1.55;margin-top:10px;color:#D5DAE0">Scale's been flat for 14 days while bulking, so targets moved <b style="color:#2CE8F5">+150 kcal</b> and <b style="color:#2CE8F5">+5 g protein</b>. Keep weigh-ins coming — the math follows the trend, not one bad morning.</div>
+              <button onClick="{{ goProgress }}" style="margin-top:12px;padding:0;background:none;border:none;color:#2CE8F5;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit">See the trend →</button>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button style="flex:1;padding:14px;border-radius:14px;background:#2CE8F5;border:none;color:#04262B;font-size:13.5px;font-weight:900;cursor:pointer;font-family:inherit">+ Log food</button>
+              <button style="flex:1;padding:14px;border-radius:14px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit">Repeat yesterday</button>
+            </div>
+            <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:6px 16px">
+              <sc-for list="{{ meals }}" as="m" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+                  <div><div style="font-size:14px;font-weight:700">{{ m.name }}</div><div style="font-size:11px;color:#8B93A0;font-weight:600;margin-top:2px">{{ m.when }}</div></div>
+                  <div style="text-align:right"><div style="font-size:14px;font-weight:800;font-variant-numeric:tabular-nums">{{ m.kcal }} kcal</div><div style="font-size:11px;color:#2CE8F5;font-weight:700;margin-top:2px">{{ m.pro }} g protein</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ PROGRESS ═══════════ -->
+        <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em;margin-top:4px">Trend</div>
+            <div style="display:flex;align-items:baseline;gap:12px;margin-top:-6px">
+              <div style="font-size:42px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.03em">{{ curWeight }}<span style="font-size:17px;color:#8B93A0;font-weight:700"> kg</span></div>
+              <div style="padding:6px 10px;border-radius:999px;background:rgba(44,232,245,0.12);border:1px solid rgba(44,232,245,0.35);color:#2CE8F5;font-size:11px;font-weight:900">+0.24 kg/wk · on pace</div>
+            </div>
+            <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:16px">
+              <svg width="100%" height="170" viewBox="0 0 320 170" preserveAspectRatio="none">
+                <line x1="0" y1="42" x2="320" y2="42" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
+                <line x1="0" y1="85" x2="320" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
+                <line x1="0" y1="128" x2="320" y2="128" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
+                <polyline points="{{ rawPts }}" fill="none" stroke="rgba(139,147,160,0.45)" stroke-width="1.5"></polyline>
+                <polyline points="{{ avgPts }}" fill="none" stroke="#2CE8F5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              </svg>
+              <div style="display:flex;gap:16px;margin-top:10px">
+                <div style="display:flex;align-items:center;gap:7px"><div style="width:16px;height:3px;border-radius:2px;background:#2CE8F5"></div><span style="font-size:11px;color:#8B93A0;font-weight:700">7-day rolling avg</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><div style="width:16px;height:2px;background:rgba(139,147,160,0.45)"></div><span style="font-size:11px;color:#8B93A0;font-weight:700">daily weigh-ins</span></div>
+              </div>
+            </div>
+            <button onClick="{{ addWeigh }}" style="padding:16px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">Log today's weigh-in</button>
+            <div style="font-size:12px;color:#5A616C;line-height:1.5">Daily scale noise is ignored — targets only move when the <b style="color:#8B93A0">rolling average</b> stalls or runs too hot for 2 weeks.</div>
+            <button onClick="{{ goShelf }}" style="display:flex;align-items:center;gap:14px;background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:14px 16px;cursor:pointer;color:#F3F5F7;font-family:inherit;text-align:left">
+              <img src="assets/kilo-var-0.png" style="height:52px;flex-shrink:0" alt="Kilo">
+              <div style="flex:1"><div style="font-size:14.5px;font-weight:800">Kilo collection</div><div style="font-size:11.5px;color:#8B93A0;margin-top:2px">3 of 6 variants earned · next at 30-day streak</div></div>
+              <div style="color:#8B93A0;font-size:16px">→</div>
+            </button>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ LIBRARY ═══════════ -->
+        <sc-if value="{{ isLibrary }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <button onClick="{{ goTrain }}" style="align-self:flex-start;padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">← Builder</button>
+            <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em">Saved workouts</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ libRows }}" as="lb" hint-placeholder-count="4">
+                <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:15px 16px;display:flex;align-items:center;gap:12px">
+                  <button onClick="{{ lb.toggle }}" style="{{ lb.starStyle }}">★</button>
+                  <div style="flex:1"><div style="font-size:15.5px;font-weight:800">{{ lb.name }}</div><div style="font-size:11.5px;color:#8B93A0;font-weight:600;margin-top:3px">{{ lb.meta }}</div></div>
+                  <button onClick="{{ lb.load }}" style="padding:11px 16px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.1);color:#2CE8F5;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit">Load</button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:12px;color:#5A616C;line-height:1.5">Starred workouts surface first on their split day. Loading one refills today's slots — locks included.</div>
+          </div>
+        </sc-if>
+
+        <!-- ═══════════ MASCOT SHELF ═══════════ -->
+        <sc-if value="{{ isShelf }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;animation:kin .3s ease">
+            <button onClick="{{ goProgress }}" style="align-self:flex-start;padding:9px 14px;border-radius:999px;background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">← Progress</button>
+            <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em">The Kilo shelf</div>
+            <div style="font-size:12.5px;color:#8B93A0;margin-top:-8px">Earn variants by showing up. They're vinyl. They judge you kindly.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <sc-for list="{{ shelfItems }}" as="sh" hint-placeholder-count="6">
+                <div style="background:#15171B;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+                  <div style="height:118px;display:flex;align-items:flex-end"><div style="{{ sh.imgStyle }}"></div></div>
+                  <div style="text-align:center"><div style="font-size:13.5px;font-weight:800">{{ sh.name }}</div><div style="{{ sh.reqStyle }}">{{ sh.req }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- ═══════════ TAB BAR ═══════════ -->
+      <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:14px;right:14px;bottom:22px;z-index:30;display:flex;background:rgba(21,23,27,0.86);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.09);border-radius:24px;padding:8px 6px;box-shadow:0 12px 32px rgba(0,0,0,0.5)">
+          <button onClick="{{ goHome }}" style="{{ tabHomeStyle }}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1h-4v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="{{ tabHomeC }}" stroke-width="1.8" stroke-linejoin="round"></path></svg>Home</button>
+          <button onClick="{{ goTrain }}" style="{{ tabTrainStyle }}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="7" width="3" height="6" rx="1" fill="{{ tabTrainC }}"></rect><rect x="16" y="7" width="3" height="6" rx="1" fill="{{ tabTrainC }}"></rect><rect x="4.5" y="5" width="3" height="10" rx="1" fill="{{ tabTrainC }}"></rect><rect x="12.5" y="5" width="3" height="10" rx="1" fill="{{ tabTrainC }}"></rect><rect x="7.5" y="9" width="5" height="2" fill="{{ tabTrainC }}"></rect></svg>Train</button>
+          <button onClick="{{ goFood }}" style="{{ tabFoodStyle }}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="{{ tabFoodC }}" stroke-width="1.8"></circle><path d="M10 3a7 7 0 017 7" stroke="{{ tabFoodC }}" stroke-width="3.5" stroke-linecap="round"></path></svg>Food</button>
+          <button onClick="{{ goProgress }}" style="{{ tabProgStyle }}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="11" width="3.5" height="7" rx="1" fill="{{ tabProgC }}"></rect><rect x="8.2" y="7" width="3.5" height="11" rx="1" fill="{{ tabProgC }}"></rect><rect x="14.4" y="2.5" width="3.5" height="15.5" rx="1" fill="{{ tabProgC }}"></rect></svg>Progress</button>
+        </div>
+      </sc-if>
+
+      <!-- ═══════════ EXERCISE PICKER SHEET ═══════════ -->
+      <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:40;background:rgba(5,6,8,0.6);backdrop-filter:blur(3px);display:flex;flex-direction:column;justify-content:flex-end" onClick="{{ closePicker }}">
+          <div style="background:#111318;border-radius:28px 28px 0 0;border-top:1px solid rgba(255,255,255,0.1);padding:14px 18px 40px;max-height:72%;display:flex;flex-direction:column;animation:kin .25s ease" onClick="{{ stop }}">
+            <div style="width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.18);margin:0 auto 14px"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <div><div style="font-size:11px;font-weight:900;letter-spacing:0.13em;color:#2CE8F5">FILL SLOT</div><div style="font-size:21px;font-weight:900;letter-spacing:-0.02em;margin-top:3px">{{ pickerTitle }}</div></div>
+              <button onClick="{{ closePicker }}" style="width:40px;height:40px;border-radius:50%;background:#1E2127;border:1px solid rgba(255,255,255,0.09);color:#8B93A0;font-size:15px;cursor:pointer">✕</button>
+            </div>
+            <div style="overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-top:10px">
+              <sc-for list="{{ pickerAvail }}" as="p" hint-placeholder-count="3">
+                <div style="background:#181B20;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:12px">
+                  <div style="width:56px;height:56px;border-radius:12px;background:#FDFDFD;flex-shrink:0;overflow:hidden">
+                    <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ p.imgId }}" shape="rect" fit="cover" data-compact="1" src="{{ p.img }}" placeholder="+" hint-size="56px,56px"></x-import>
+                  </div>
+                  <button onClick="{{ p.choose }}" style="flex:1;background:none;border:none;padding:0;text-align:left;color:#F3F5F7;cursor:pointer;font-family:inherit">
+                    <div style="font-size:15px;font-weight:800">{{ p.name }}</div>
+                    <div style="font-size:11.5px;color:#8B93A0;font-weight:600;margin-top:3px">{{ p.eq }} · start ~{{ p.start }} kg</div>
+                  </button>
+                  <button onClick="{{ p.info }}" style="width:40px;height:40px;border-radius:12px;background:#1E2127;border:1px solid rgba(255,255,255,0.1);color:#2CE8F5;font-size:14px;font-weight:900;cursor:pointer;flex-shrink:0">i</button>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasBlocked }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10.5px;font-weight:900;letter-spacing:0.13em;color:#5A616C;margin-top:8px">HIDDEN — GEAR OFF IN YOUR INVENTORY</div>
+                <sc-for list="{{ pickerBlocked }}" as="pb" hint-placeholder-count="1">
+                  <div style="border:1px dashed rgba(255,255,255,0.1);border-radius:16px;padding:13px 14px;opacity:0.55">
+                    <div style="font-size:14px;font-weight:700;color:#8B93A0">{{ pb.name }}</div>
+                    <div style="font-size:11px;color:#5A616C;font-weight:600;margin-top:3px">needs {{ pb.missing }}</div>
+                  </div>
+                </sc-for>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══════════ REST TIMER OVERLAY ═══════════ -->
+      <sc-if value="{{ resting }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:45;background:rgba(7,8,10,0.92);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+          <div style="width:96px;height:190px;background:url('assets/kilo-rest.png') 0 0 / 500% 100% no-repeat;animation:kf5 3s steps(5) infinite"></div>
+          <div style="font-size:11px;font-weight:900;letter-spacing:0.16em;color:#2CE8F5">REST · LOGGED {{ lastLogged }}</div>
+          <div style="position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center">
+            <svg width="210" height="210" viewBox="0 0 210 210" style="position:absolute;inset:0">
+              <circle cx="105" cy="105" r="94" fill="none" stroke="#1E2127" stroke-width="9"></circle>
+              <circle cx="105" cy="105" r="94" fill="none" stroke="#2CE8F5" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ restDash }}" transform="rotate(-90 105 105)"></circle>
+            </svg>
+            <div style="font-size:56px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.03em">{{ restStr }}</div>
+          </div>
+          <div style="font-size:13.5px;color:#8B93A0;font-weight:600">{{ nextUp }}</div>
+          <div style="display:flex;gap:10px">
+            <button onClick="{{ addRest }}" style="padding:15px 22px;border-radius:16px;background:#15171B;border:1px solid rgba(255,255,255,0.1);color:#F3F5F7;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">+30 s</button>
+            <button onClick="{{ skipRest }}" style="padding:15px 26px;border-radius:16px;background:#2CE8F5;border:none;color:#04262B;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit">Skip — I'm ready</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ═══════════ NOTIFICATION WIDGET PREVIEW ═══════════ -->
+      <sc-if value="{{ showNotif }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:55;background:rgba(4,5,7,0.82);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;padding-top:96px;cursor:pointer" onClick="{{ toggleNotif }}">
+          <div style="font-size:52px;font-weight:300;color:#F3F5F7;font-variant-numeric:tabular-nums;font-family:-apple-system,system-ui">21:47</div>
+          <div style="font-size:13px;color:#8B93A0;margin-top:2px;font-family:-apple-system,system-ui">Thursday, July 18</div>
+          <div style="margin-top:26px;width:352px;background:rgba(28,30,36,0.92);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:14px 16px;box-shadow:0 16px 48px rgba(0,0,0,0.6)" onClick="{{ stop }}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#3DF0FC,#14C3D2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#04262B">R</div>
+              <div style="flex:1"><div style="font-size:13px;font-weight:700">REPZ · Rest timer</div><div style="font-size:11.5px;color:#8B93A0">{{ liveExName }} — next: {{ nextSetShort }}</div></div>
+              <div style="font-size:26px;font-weight:900;font-variant-numeric:tabular-nums;color:#2CE8F5">{{ notifTime }}</div>
+            </div>
+            <div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.1);margin:12px 0;overflow:hidden"><div style="{{ notifBarStyle }}"></div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button onClick="{{ rDown }}" style="width:46px;height:42px;border-radius:12px;background:rgba(255,255,255,0.1);border:none;color:#F3F5F7;font-size:17px;font-weight:800;cursor:pointer">−</button>
+              <div style="width:56px;text-align:center;font-size:19px;font-weight:900;font-variant-numeric:tabular-nums">{{ reps }}<span style="font-size:10px;color:#8B93A0;font-weight:700"> reps</span></div>
+              <button onClick="{{ rUp }}" style="width:46px;height:42px;border-radius:12px;background:rgba(255,255,255,0.1);border:none;color:#F3F5F7;font-size:17px;font-weight:800;cursor:pointer">+</button>
+              <button onClick="{{ logSet }}" style="flex:1;height:42px;border-radius:12px;background:#2CE8F5;border:none;color:#04262B;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit">Log {{ weightStr }} kg × {{ reps }}</button>
+            </div>
+          </div>
+          <div style="margin-top:18px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#5A616C">live-activity / notification-bar widget · tap anywhere to close</div>
+        </div>
+      </sc-if>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;homeLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mascot-hero&quot;,&quot;stats-first&quot;],&quot;default&quot;:&quot;mascot-hero&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout variants&quot;},&quot;slotStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;list&quot;,&quot;grid&quot;],&quot;default&quot;:&quot;list&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout variants&quot;},&quot;liveLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;focus&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;focus&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout variants&quot;},&quot;restSeconds&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:120,&quot;min&quot;:30,&quot;max&quot;:300,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  db = [
+    {id:'incdb',name:'Incline DB Press',region:'Upper chest',eq:['Dumbbells','Bench'],start:26,steps:['Set the bench to 30°, dumbbells resting on your thighs.','Kick back one knee at a time, press up over your upper chest.','Lower 2–3 s until elbows pass the bench, drive back up.'],tips:['Keep shoulder blades pinned down and back the whole set.','Slight arch, feet planted — power comes from a stable base.'],mistakes:['Bench too steep (45°+) turns this into a shoulder press.','Flaring elbows to 90° strains the shoulder capsule.']},
+    {id:'incbb',name:'Incline Bench Press',region:'Upper chest',eq:['Barbell','Bench'],start:50,steps:['Eyes under the bar, grip just outside shoulders.','Unrack, lower to the top of the chest under control.','Press up and slightly back toward the rack.'],tips:['Bar path is a slight arc, not straight up.','Squeeze the bar hard — it stabilizes the whole press.'],mistakes:['Bouncing off the chest robs tension and risks the sternum.','No spotter near failure — use safeties.']},
+    {id:'lowfly',name:'Low-to-High Cable Fly',region:'Upper chest',eq:['Cables'],start:12.5,steps:['Set pulleys low, step forward into a split stance.','Sweep up and in, hands finishing at eye height.','Resist the negative back to the start.'],tips:['Think "scoop", not "press" — elbows stay softly bent.','Pause a beat at the top squeeze.'],mistakes:['Turning it into a press by bending the elbows.','Standing too upright — lean slightly forward.']},
+    {id:'machincl',name:'Incline Press Machine',region:'Upper chest',eq:['Machines'],start:40,img:'assets/machine-pecfly.png',steps:['Set the seat so handles sit at upper-chest height.','Press to just short of lockout.','Control 3 s down.'],tips:['Great near failure — the machine catches the weight, not you.'],mistakes:['Seat too low shifts load to the front delts.']},
+    {id:'dips',name:'Chest Dips',region:'Lower chest',eq:['Pull-up bar'],start:0,steps:['Grab the bars, lean your torso 20–30° forward.','Lower until your upper arms hit parallel.','Press up without locking out fully.'],tips:['Lean = chest. Upright = triceps. Pick your lean and keep it.','Add weight with a belt once you pass 12 clean reps.'],mistakes:['Sinking too deep with cold shoulders — earn the range.','Flapping legs to cheat momentum.']},
+    {id:'flatdb',name:'Flat DB Press',region:'Lower chest',eq:['Dumbbells','Bench'],start:30,steps:['Lie flat, dumbbells stacked over mid-chest.','Lower with a 45° elbow tuck.','Press up and slightly together.'],tips:['Let the DBs drift apart at the bottom for a deeper stretch.'],mistakes:['Clanking the bells at the top dumps chest tension.']},
+    {id:'hifly',name:'High-to-Low Cable Fly',region:'Lower chest',eq:['Cables'],start:15,steps:['Pulleys high, step forward, slight forward lean.','Sweep down and in — hands meet below your sternum.','Control the stretch back up.'],tips:['Keep the arc wide; the squeeze happens at the bottom.'],mistakes:['Shrugging as you pull — keep the traps quiet.']},
+    {id:'declmach',name:'Decline Press Machine',region:'Lower chest',eq:['Machines'],start:50,img:'assets/machine-pecfly.png',steps:['Handles at lower-chest height, press to soft lockout.','3 s negative every rep.'],tips:['Drive elbows slightly down-and-in.'],mistakes:['Half reps at heavy loads — range beats ego.']},
+    {id:'latdb',name:'DB Lateral Raise',region:'Side delts',eq:['Dumbbells'],start:10,steps:['Slight forward hinge, dumbbells at your sides.','Raise out and slightly forward to shoulder height.','Lower 2 s — the negative is the growth.'],tips:['Lead with the elbows, pinkies a touch higher at the top.','Lighter than you think, stricter than you want.'],mistakes:['Swinging the torso to heave the weight up.','Raising above shoulder height shifts load to the traps.']},
+    {id:'latcable',name:'Cable Lateral Raise',region:'Side delts',eq:['Cables'],start:7.5,steps:['Pulley at knee height, stand side-on.','Raise the far arm out to shoulder height.','Constant tension — never let the stack rest.'],tips:['Step slightly away so tension starts at the bottom.'],mistakes:['Grinding the cable path against your body.']},
+    {id:'latmach',name:'Lateral Raise Machine',region:'Side delts',eq:['Machines'],start:35,steps:['Pads just above the elbows, raise to parallel.','Slow 3 s negative.'],tips:['Perfect for drop sets — pull the pin, keep going.'],mistakes:['Seat too high turns it into a shrug.']},
+    {id:'ohp',name:'Overhead Press',region:'Front delts',eq:['Barbell'],start:40,steps:['Bar on front delts, grip just outside shoulders.','Brace, press overhead, head "through the window".','Lower under control to the collarbone.'],tips:['Squeeze glutes to protect the lower back.','Full lockout — biceps by the ears.'],mistakes:['Excessive lean-back turns it into an incline press.','Pressing around your face instead of moving it back.']},
+    {id:'dbsp',name:'Seated DB Shoulder Press',region:'Front delts',eq:['Dumbbells','Bench'],start:22,steps:['Bench upright, dumbbells at ear height.','Press up until the bells nearly touch.','Lower until elbows hit 90°.'],tips:['Neutral-ish grip is friendlier on cranky shoulders.'],mistakes:['Arching off the back pad at heavy loads.']},
+    {id:'pushdown',name:'Cable Pushdown',region:'Triceps',eq:['Cables'],start:25,steps:['Elbows pinned to your ribs, bar at chest height.','Push down to full lockout, squeeze 1 s.','Let the bar rise only to chest height.'],tips:['Lockout is the rep — no lockout, no rep.','A slight forward lean keeps tension honest.'],mistakes:['Elbows drifting forward turns it into a lat pushdown.','Letting the stack yank your arms up.']},
+    {id:'ohext',name:'Overhead DB Extension',region:'Triceps',eq:['Dumbbells'],start:22,steps:['Both hands under one bell, press it overhead.','Lower behind your head until forearms touch biceps.','Extend back up without moving the elbows.'],tips:['This is the long-head stretch — go deep, go controlled.'],mistakes:['Elbows flaring wide like wings.','Bouncing out of the stretch.']},
+    {id:'skull',name:'EZ Skullcrusher',region:'Triceps',eq:['Barbell','Bench'],start:25,steps:['Lie back, EZ bar over your forehead.','Lower to just behind the crown of your head.','Extend without letting the elbows drift.'],tips:['Behind the head, not to the nose — better stretch, safer miss.'],mistakes:['Going too heavy too soon — elbows pay the bill.']},
+  ];
+  splits = [
+    {id:'fb',name:'Full Body',days:'3 days/wk',blurb:'Everything, three times a week. Best bang-for-time if life is busy.'},
+    {id:'ul',name:'Upper / Lower',days:'4 days/wk',blurb:'Two upper, two lower. The balanced default for most lifters.'},
+    {id:'ppl',name:'Push · Pull · Legs',days:'5 days/wk',blurb:'Max volume per muscle. For people who love being in the gym.'},
+  ];
+  state = {
+    screen:'onboarding', obStep:0, sex:'M',
+    fields:{age:28,height:182,weight:76.5}, goal:'bulk', split:'ppl',
+    equip:{'Barbell':false,'Dumbbells':true,'Cables':true,'Machines':true,'Bench':true,'Pull-up bar':true,'Kettlebells':false,'Bands':false},
+    slots:[{region:'Upper chest',ex:'incdb'},{region:'Lower chest',ex:null},{region:'Side delts',ex:'latdb'},{region:'Front delts',ex:null},{region:'Triceps',ex:null}],
+    picker:null, detail:null, detailSlot:null,
+    exIdx:0, set:1, weight:26, reps:10, rir:'Solid', logged:[], resting:false, restLeft:0, restTotal:120,
+    showNotif:false, favs:[true,false,false,true],
+    weights:[75.1,75.4,75.2,75.6,75.5,75.9,75.7,75.8,76.1,75.9,76.2,76.0,76.3,76.2,76.1,76.4,76.3,76.5,76.4,76.6,76.4,76.5],
+  };
+  componentWillUnmount(){ clearInterval(this._t); }
+  go(screen){ clearInterval(this._t); this.setState({screen, showNotif:false, resting:false, picker:null}); }
+  ex(id){ return this.db.find(e=>e.id===id); }
+  avail(e){ return e.eq.every(k=>this.state.equip[k]); }
+  liveList(){ return this.state.slots.filter(s=>s.ex).map(s=>this.ex(s.ex)); }
+  startRest(){
+    clearInterval(this._t);
+    const total = Number(this.props.restSeconds ?? 120);
+    this.setState({resting:true, restLeft:total, restTotal:total});
+    this._t = setInterval(()=>{
+      this.setState(st=>{
+        if(st.restLeft<=1){ clearInterval(this._t); return {resting:false, restLeft:0}; }
+        return {restLeft:st.restLeft-1};
+      });
+    },1000);
+  }
+  logSet(){
+    this.setState(st=>{
+      const exs=this.liveList(); const cur=exs[st.exIdx];
+      const logged=[...st.logged,{ex:cur.id,set:st.set,kg:st.weight,reps:st.reps,rir:st.rir}];
+      let set=st.set+1, exIdx=st.exIdx, weight=st.weight;
+      if(set>3){ set=1; exIdx=Math.min(exIdx+1,exs.length-1); if(exIdx!==st.exIdx) weight=exs[exIdx].start||20; }
+      return {logged,set,exIdx,weight,rir:'Solid',showNotif:false};
+    });
+    this.startRest();
+  }
+  fmtRest(v){ const m=Math.floor(v/60), s=v%60; return m+':'+String(s).padStart(2,'0'); }
+  renderVals(){
+    const S=this.state, A='#2CE8F5', mut='#8B93A0';
+    const homeLayout=this.props.homeLayout ?? 'mascot-hero';
+    const slotStyle=this.props.slotStyle ?? 'list';
+    const liveLayout=this.props.liveLayout ?? 'focus';
+    const scr=S.screen;
+    const chipBase='padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:#15171B;color:#8B93A0;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;';
+    const jump=(label,fn)=>({label,fn,style:chipBase});
+    const jumpChips=[
+      jump('Onboarding',()=>{this.go('onboarding');this.setState({obStep:0});}),
+      jump('Home',()=>this.go('home')), jump('Builder',()=>this.go('train')),
+      jump('Picker',()=>{this.go('train');this.setState({picker:1});}),
+      jump('Exercise detail',()=>{this.go('detail');this.setState({detail:'incdb',detailSlot:null});}),
+      jump('Live workout',()=>this.go('live')),
+      jump('Rest timer',()=>{this.go('live');this.startRest();}),
+      jump('Notif widget',()=>{this.go('live');this.setState({showNotif:true});}),
+      jump('Nutrition',()=>this.go('food')), jump('Weight trend',()=>this.go('progress')),
+      jump('Library',()=>this.go('library')), jump('Shelf',()=>this.go('shelf')),
+    ];
+    // onboarding
+    const obDots=[0,1,2,3].map(i=>({style:`height:5px;border-radius:3px;flex:1;background:${i<=S.obStep?A:'#1E2127'}`}));
+    const segBase='flex:1;padding:15px;border-radius:16px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;';
+    const seg=(on)=>segBase+(on?`background:${A};border:none;color:#04262B`:`background:#15171B;border:1px solid rgba(255,255,255,0.09);color:${mut}`);
+    const stepDefs=[{key:'age',label:'AGE',unit:'yrs',step:1},{key:'height',label:'HEIGHT',unit:'cm',step:1},{key:'weight',label:'WEIGHT',unit:'kg',step:0.5}];
+    const obFields=stepDefs.map(d=>({label:d.label,unit:d.unit,value:S.fields[d.key],
+      up:()=>this.setState(st=>({fields:{...st.fields,[d.key]:Math.round((st.fields[d.key]+d.step)*10)/10}})),
+      down:()=>this.setState(st=>({fields:{...st.fields,[d.key]:Math.round((st.fields[d.key]-d.step)*10)/10}}))}));
+    const cardSel=(on)=>`display:block;width:100%;box-sizing:border-box;text-align:left;padding:17px;border-radius:20px;cursor:pointer;font-family:inherit;color:#F3F5F7;background:${on?'rgba(44,232,245,0.08)':'#15171B'};border:1.5px solid ${on?A:'rgba(255,255,255,0.08)'}`;
+    const goalCards=[
+      {title:'BULK',tag:'+0.25 kg/wk',blurb:'Build muscle in a lean surplus. Kilo bumps calories when the scale stalls.'},
+      {title:'CUT',tag:'−0.5 kg/wk',blurb:'Drop fat, keep strength. Protein stays high, calories adapt weekly.'},
+    ].map(g=>({...g,pick:()=>this.setState({goal:g.title.toLowerCase()}),style:cardSel(S.goal===g.title.toLowerCase()),
+      tagStyle:`font-size:11px;font-weight:900;padding:4px 9px;border-radius:7px;${S.goal===g.title.toLowerCase()?`background:${A};color:#04262B`:`background:#1E2127;color:${mut}`}`}));
+    const splitCards=this.splits.map(sp=>({...sp,pick:()=>this.setState({split:sp.id}),style:cardSel(S.split===sp.id),
+      daysStyle:`font-size:11px;font-weight:900;padding:4px 9px;border-radius:7px;${S.split===sp.id?`background:${A};color:#04262B`:`background:#1E2127;color:${mut}`}`}));
+    const equipList=Object.keys(S.equip).map(k=>{const on=S.equip[k];return {name:k,pill:on?'IN':'OUT',
+      toggle:()=>this.setState(st=>({equip:{...st.equip,[k]:!st.equip[k]}})),
+      style:`display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px 14px;border-radius:16px;cursor:pointer;font-family:inherit;color:${on?'#F3F5F7':mut};background:${on?'rgba(44,232,245,0.08)':'#15171B'};border:1.5px solid ${on?'rgba(44,232,245,0.5)':'rgba(255,255,255,0.08)'}`,
+      pillStyle:`font-size:9.5px;font-weight:900;letter-spacing:0.1em;padding:4px 8px;border-radius:6px;${on?`background:${A};color:#04262B`:`background:#1E2127;color:#5A616C`}`};});
+    // builder
+    const slotsList=S.slots.map((sl,i)=>{const e=sl.ex?this.ex(sl.ex):null;return {
+      regionU:sl.region.toUpperCase(), locked:!!e, open:!e,
+      exName:e?e.name:'', eq:e?e.eq.join(' + '):'',
+      imgId:e?'ex-'+e.id:'ex-none', img:e?e.img:undefined,
+      pick:()=>this.setState({picker:i}),
+      swap:()=>this.setState(st=>{const slots=st.slots.map((x,j)=>j===i?{...x,ex:null}:x);return {slots,picker:i};}),
+      style:`background:#15171B;border-radius:20px;padding:15px 16px;border:1.5px solid ${e?'rgba(44,232,245,0.45)':'rgba(255,255,255,0.08)'};${e?'box-shadow:0 0 24px rgba(44,232,245,0.06);':''}`};});
+    const filledCount=S.slots.filter(s=>s.ex).length;
+    const slotBar=S.slots.map(s=>({style:`flex:1;height:7px;border-radius:4px;background:${s.ex?A:'#1E2127'}`}));
+    const todayRegions=S.slots.map(s=>s.region);
+    const hiddenAll=this.db.filter(e=>todayRegions.includes(e.region)&&!this.avail(e));
+    const offGear=[...new Set(hiddenAll.flatMap(e=>e.eq.filter(k=>!S.equip[k])))];
+    const hiddenNote=hiddenAll.length?`${hiddenAll.length} exercises hidden — ${offGear.join(' + ')} off in your inventory`:'All exercises for this session are available';
+    // picker
+    const pIdx=S.picker, pSlot=pIdx!=null?S.slots[pIdx]:null;
+    const pool=pSlot?this.db.filter(e=>e.region===pSlot.region):[];
+    const pickerAvail=pool.filter(e=>this.avail(e)).map(e=>({name:e.name,eq:e.eq.join(' + '),start:e.start,imgId:'ex-'+e.id,img:e.img,
+      choose:()=>this.setState(st=>({slots:st.slots.map((x,j)=>j===pIdx?{...x,ex:e.id}:x),picker:null})),
+      info:()=>this.setState({detail:e.id,detailSlot:pIdx,picker:null,screen:'detail'})}));
+    const pickerBlocked=pool.filter(e=>!this.avail(e)).map(e=>({name:e.name,missing:e.eq.filter(k=>!S.equip[k]).join(', ')}));
+    // detail
+    const dEx=S.detail?this.ex(S.detail):this.db[0];
+    // live
+    const exs=this.liveList(); const cur=exs[Math.min(S.exIdx,exs.length-1)]||this.db[0];
+    const liveExs=exs.map((e,i)=>{const on=i===S.exIdx;const done=S.logged.filter(l=>l.ex===e.id).length;
+      return {name:`${e.name.split(' ').slice(0,2).join(' ')} ${done}/3`,pick:()=>this.setState({exIdx:i,set:Math.min(done+1,3),weight:e.start||20}),
+        style:`white-space:nowrap;padding:9px 13px;border-radius:999px;font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit;${on?`background:${A};border:none;color:#04262B`:`background:#15171B;border:1px solid rgba(255,255,255,0.1);color:${mut}`}`};});
+    const hype=['Same weight, more intent.','Own the negative.','Last one, best one.'];
+    const rirBtn=(on)=>`flex:1;display:flex;flex-direction:column;gap:3px;align-items:center;padding:13px 6px;border-radius:14px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;${on?`background:${A};border:none;color:#04262B`:`background:#15171B;border:1px solid rgba(255,255,255,0.09);color:#F3F5F7`}`;
+    const rirTag=(r)=>`margin-left:auto;font-size:10px;font-weight:900;letter-spacing:0.06em;padding:4px 8px;border-radius:6px;${r==='Barely'?'background:rgba(255,176,44,0.15);color:#FFB02C':`background:rgba(44,232,245,0.12);color:${A}`}`;
+    const loggedRows=[...S.logged].slice(-5).reverse().map(l=>({set:l.set,kg:l.kg,reps:l.reps,rir:l.rir.toUpperCase(),tagStyle:rirTag(l.rir)}));
+    const last=S.logged[S.logged.length-1];
+    const restC=2*Math.PI*94, restPct=S.restTotal?S.restLeft/S.restTotal:0;
+    const nextSetShort=`set ${S.set} of 3`;
+    // food rings
+    const cC=2*Math.PI*58, pC=2*Math.PI*42;
+    // weight chart
+    const w=S.weights, mn=Math.min(...w)-0.15, mx=Math.max(...w)+0.15;
+    const X=i=>8+(i/(w.length-1))*304, Y=v=>160-((v-mn)/(mx-mn))*145;
+    const rawPts=w.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+    const avg=w.map((_,i)=>{const a=w.slice(Math.max(0,i-6),i+1);return a.reduce((x,y)=>x+y,0)/a.length;});
+    const avgPts=avg.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+    // library
+    const libDefs=[{name:'Push A',meta:'5 slots · ~52 min · last: today'},{name:'Pull A',meta:'5 slots · ~48 min · last: 2 days ago'},{name:'Legs A',meta:'6 slots · ~58 min · last: 3 days ago'},{name:'Upper B (travel)',meta:'4 slots · DB-only · ~40 min'}];
+    const libRows=libDefs.map((d,i)=>({...d,load:()=>this.go('train'),toggle:()=>this.setState(st=>{const favs=[...st.favs];favs[i]=!favs[i];return {favs};}),
+      starStyle:`width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:#1E2127;font-size:18px;cursor:pointer;flex-shrink:0;color:${S.favs[i]?'#FFB02C':'#3A4048'}`}));
+    // shelf
+    const shelfDefs=[
+      {name:'OG Kilo',req:'Day one. Ride or die.',earned:true,img:'assets/kilo-var-0.png'},
+      {name:'Coach Kilo',req:'7-day streak',earned:true,img:'assets/kilo-coach.png'},
+      {name:'Bulk Szn',req:'First +2 kg on trend',earned:true,img:'assets/kilo-var-3.png'},
+      {name:'Golden Kilo',req:'30-day streak · 18 to go',earned:false,img:'assets/kilo-var-1.png'},
+      {name:'Neon Kilo',req:'Log 100 workouts',earned:false,img:'assets/kilo-var-2.png'},
+      {name:'Shredded Kilo',req:'Hit your goal weight',earned:false,img:'assets/kilo-var-4.png'},
+    ];
+    const shelfItems=shelfDefs.map(d=>({name:d.name,req:d.earned?d.req:'LOCKED · '+d.req,
+      imgStyle:`width:74px;height:118px;background:url('${d.img}') center bottom / contain no-repeat;${d.earned?'':'filter:grayscale(1) brightness(0.4);opacity:0.8'}`,
+      reqStyle:`font-size:10.5px;font-weight:${d.earned?'600':'800'};margin-top:3px;color:${d.earned?mut:'#5A616C'};letter-spacing:${d.earned?'0':'0.04em'}`}));
+    // exercise demo sprite (by equipment)
+    const demos={Machines:['pecdeck',6,0.9],Cables:['cablecurl',5,0.603],Dumbbells:['dbcurl',5,0.612],Barbell:['squat',5,0.832],'Pull-up bar':['situps',5,0.757]};
+    const dKey=dEx.eq.find(k=>demos[k])||'Dumbbells';
+    const [dAnim,dN,dAsp]=demos[dKey];
+    const demoStyle=`width:${Math.round(200*dAsp)}px;height:200px;background:url('assets/kilo-${dAnim}.png') 0 0 / ${dN*100}% 100% no-repeat;animation:kf${dN} ${(dN*0.32).toFixed(2)}s steps(${dN}) infinite;margin-bottom:6px`;
+    const tab=(on)=>`flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:18px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:10px;font-weight:800;letter-spacing:0.04em;color:${on?A:mut}`;
+    return {
+      jumpChips,
+      isOnboarding:scr==='onboarding', isHome:scr==='home', isTrain:scr==='train', isDetail:scr==='detail',
+      isLive:scr==='live', isFood:scr==='food', isProgress:scr==='progress', isLibrary:scr==='library', isShelf:scr==='shelf',
+      showTabs:['home','train','food','progress','library','shelf'].includes(scr),
+      homeHero:scr==='home'&&homeLayout==='mascot-hero', homeCompact:scr==='home'&&homeLayout==='stats-first',
+      slotList:slotStyle==='list', slotGrid:slotStyle==='grid',
+      slotWrapStyle:slotStyle==='grid'?'display:grid;grid-template-columns:1fr 1fr;gap:10px':'display:flex;flex-direction:column;gap:10px',
+      liveFocus:liveLayout==='focus', liveCompact:liveLayout==='compact',
+      ob0:S.obStep===0, ob1:S.obStep===1, ob2:S.obStep===2, ob3:S.obStep===3,
+      obDots, obFields, goalCards, splitCards, equipList,
+      obCanBack:S.obStep>0, obNextLabel:S.obStep===3?"Let's go →":'Next',
+      obBack:()=>this.setState(st=>({obStep:Math.max(0,st.obStep-1)})),
+      obNext:()=>this.setState(st=>st.obStep<3?{obStep:st.obStep+1}:{screen:'home'}),
+      sexM:()=>this.setState({sex:'M'}), sexF:()=>this.setState({sex:'F'}),
+      sexMStyle:seg(S.sex==='M'), sexFStyle:seg(S.sex==='F'),
+      speech:'12 days straight. Push day — let\u2019s eat.',
+      goHome:()=>this.go('home'), goTrain:()=>this.go('train'), goFood:()=>this.go('food'),
+      goProgress:()=>this.go('progress'), goLibrary:()=>this.go('library'), goShelf:()=>this.go('shelf'),
+      goLive:()=>{this.go('live');const l=this.liveList();this.setState({exIdx:0,set:1,weight:(l[0]&&l[0].start)||20});},
+      tabHomeStyle:tab(scr==='home'), tabTrainStyle:tab(scr==='train'||scr==='library'), tabFoodStyle:tab(scr==='food'), tabProgStyle:tab(scr==='progress'||scr==='shelf'),
+      tabHomeC:scr==='home'?A:mut, tabTrainC:(scr==='train'||scr==='library')?A:mut, tabFoodC:scr==='food'?A:mut, tabProgC:(scr==='progress'||scr==='shelf')?A:mut,
+      filledCount, slotBar, slotsList, hiddenNote,
+      pickerOpen:S.picker!=null, pickerTitle:pSlot?pSlot.region:'', pickerAvail, pickerBlocked, hasBlocked:pickerBlocked.length>0,
+      closePicker:()=>this.setState({picker:null}), stop:(e)=>e.stopPropagation(),
+      dName:dEx.name, dRegion:dEx.region, dEquip:dEx.eq.join(' + '), dStart:dEx.start,
+      dImgId:'ex-'+dEx.id, dImg:dEx.img,
+      demoStyle, dSteps:dEx.steps.map((t,i)=>({n:i+1,text:t})), dTips:dEx.tips.map(t=>({text:t})), dMistakes:dEx.mistakes.map(t=>({text:t})),
+      dCanFill:S.detailSlot!=null,
+      dFill:()=>this.setState(st=>({slots:st.slots.map((x,j)=>j===st.detailSlot?{...x,ex:st.detail}:x),detail:null,detailSlot:null,screen:'train'})),
+      detailBack:()=>this.setState(st=>({screen:st.detailSlot!=null?'train':'train',picker:st.detailSlot,detail:null,detailSlot:null})),
+      liveExs, liveExName:cur.name, liveSetLabel:`Set ${S.set} of 3`, liveHype:hype[(S.set-1)%3],
+      weightStr:S.weight%1===0?String(S.weight):S.weight.toFixed(1), reps:S.reps,
+      wUp:()=>this.setState(st=>({weight:st.weight+2.5})), wDown:()=>this.setState(st=>({weight:Math.max(0,st.weight-2.5)})),
+      rUp:()=>this.setState(st=>({reps:st.reps+1})), rDown:()=>this.setState(st=>({reps:Math.max(1,st.reps-1)})),
+      rirA:()=>this.setState({rir:'Could do more'}), rirB:()=>this.setState({rir:'Solid'}), rirC:()=>this.setState({rir:'Barely'}),
+      rirAStyle:rirBtn(S.rir==='Could do more'), rirBStyle:rirBtn(S.rir==='Solid'), rirCStyle:rirBtn(S.rir==='Barely'),
+      rirSub:'font-size:9.5px;font-weight:700;opacity:0.65',
+      logSet:()=>this.logSet(), hasLogged:S.logged.length>0, loggedRows,
+      lastLogged:last?`${last.kg} KG × ${last.reps}`:'SET',
+      resting:S.resting, restStr:this.fmtRest(S.restLeft), restDash:`${(restPct*restC).toFixed(1)} ${restC.toFixed(1)}`,
+      nextUp:`Next: ${nextSetShort} — ${cur.name}`,
+      addRest:()=>this.setState(st=>({restLeft:st.restLeft+30,restTotal:st.restTotal+30})),
+      skipRest:()=>{clearInterval(this._t);this.setState({resting:false});},
+      showNotif:S.showNotif, toggleNotif:()=>this.setState(st=>({showNotif:!st.showNotif})),
+      notifTime:S.resting?this.fmtRest(S.restLeft):'1:24', nextSetShort,
+      notifBarStyle:`width:${S.resting?Math.round(restPct*100):70}%;height:100%;border-radius:3px;background:${A};transition:width 1s linear`,
+      calDash:`${(0.694*cC).toFixed(1)} ${cC.toFixed(1)}`, proDash:`${(0.8*pC).toFixed(1)} ${pC.toFixed(1)}`,
+      meals:[{name:'Overnight oats + whey',when:'07:40 · breakfast',kcal:520,pro:38},{name:'Chicken, rice, greens',when:'12:30 · lunch',kcal:710,pro:52},{name:'Greek yogurt + berries',when:'16:00 · snack',kcal:180,pro:18},{name:'Salmon + potatoes',when:'20:15 · dinner',kcal:430,pro:24}],
+      curWeight:w[w.length-1].toFixed(1), rawPts, avgPts,
+      addWeigh:()=>this.setState(st=>({weights:[...st.weights,Math.round((st.weights[st.weights.length-1]+(st.weights.length%3===0?-0.1:0.2))*10)/10]})),
+      libRows, shelfItems,
+    };
+  }
+}
+</script>
+</body>
+</html>

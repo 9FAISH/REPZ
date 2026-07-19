@@ -1,0 +1,15 @@
+.stub-title {
+  margin-top: 4px;
+}
+
+.stub-card {
+  border-style: dashed;
+  border-color: var(--border-dashed);
+  background: transparent;
+}
+
+.stub-note {
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  line-height: 1.5;
+}

@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════════════
+   REPZ design tokens — extracted from design/REPZ-Fitness-App.dc.html
+   (the imported Claude Design source of truth). Every screen styles
+   itself from these variables; do not hardcode colors in components.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Color · backgrounds ── */
+  --bg-page: #07080a;          /* page behind the phone shell */
+  --bg-app: #0b0c0f;           /* app canvas */
+  --surface: #15171b;          /* cards */
+  --elevated: #1e2127;         /* controls / nested surfaces */
+  --sheet: #111318;            /* bottom sheets */
+  --sheet-item: #181b20;       /* rows inside sheets */
+
+  /* ── Color · accent ── */
+  --accent: #2ce8f5;
+  --accent-bright: #8af5fc;    /* second ring / links hover */
+  --on-accent: #04262b;        /* text on accent fills */
+  --accent-tint-8: rgba(44, 232, 245, 0.08);
+  --accent-tint-12: rgba(44, 232, 245, 0.12);
+  --accent-border-30: rgba(44, 232, 245, 0.3);
+  --accent-border-35: rgba(44, 232, 245, 0.35);
+  --accent-border-40: rgba(44, 232, 245, 0.4);
+  --accent-border-45: rgba(44, 232, 245, 0.45);
+  --accent-border-50: rgba(44, 232, 245, 0.5);
+  --accent-glow: 0 0 32px rgba(44, 232, 245, 0.07);
+  --accent-glow-sm: 0 0 24px rgba(44, 232, 245, 0.06);
+
+  /* ── Color · warning ── */
+  --warn: #ffb02c;
+  --warn-tint-7: rgba(255, 176, 44, 0.07);
+  --warn-tint-15: rgba(255, 176, 44, 0.15);
+  --warn-border-30: rgba(255, 176, 44, 0.3);
+
+  /* ── Color · text ── */
+  --text: #f3f5f7;
+  --text-body: #d5dae0;        /* long-form copy */
+  --text-muted: #8b93a0;       /* secondary */
+  --text-faint: #5a616c;       /* tertiary / footnotes */
+  --text-disabled: #3a4048;
+
+  /* ── Color · borders ── */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-soft: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-dashed: rgba(255, 255, 255, 0.18);
+
+  /* ── Radii ── */
+  --r-xs: 10px;                /* tiny chips / step badges */
+  --r-sm: 12px;                /* thumbs, small buttons */
+  --r-ctl: 14px;               /* steppers, medium buttons */
+  --r-btn: 16px;               /* primary buttons */
+  --r-btn-lg: 18px;            /* hero CTA */
+  --r-card: 20px;              /* standard card */
+  --r-card-lg: 22px;           /* hero / feature cards */
+  --r-tabbar: 24px;
+  --r-sheet: 28px;             /* bottom sheet top corners */
+  --r-pill: 999px;
+
+  /* ── Type ── */
+  --font: 'Archivo', system-ui, sans-serif;
+  --fs-display: 30px;          /* onboarding titles */
+  --fs-title: 26px;            /* screen titles / stat numerals */
+  --fs-card-title: 24px;
+  --fs-numeral-lg: 44px;       /* live weight/reps */
+  --fs-numeral-xl: 56px;       /* rest countdown */
+  --fs-ex-name: 17px;
+  --fs-base: 14px;
+  --fs-body: 13.5px;
+  --fs-sub: 12.5px;
+  --fs-small: 12px;
+  --fs-caption: 11.5px;
+  --fs-label: 11px;            /* section labels, 800–900 weight */
+  --fs-tiny: 10.5px;
+  --ls-label: 0.13em;          /* tracking for uppercase labels */
+  --ls-tight: -0.02em;         /* tracking for display text */
+
+  /* ── Spacing ── */
+  --pad-screen: 18px;          /* horizontal screen padding */
+  --gap-stack: 14px;           /* vertical rhythm between cards */
+  --pad-card: 16px;
+  --pad-card-lg: 18px;
+
+  /* ── Tap targets ── */
+  --tap-min: 48px;
+  --tap-comfy: 52px;
+
+  /* ── Shell ── */
+  --phone-max-w: 430px;
+  --tabbar-clearance: 120px;   /* scroll padding under floating tab bar */
+}
