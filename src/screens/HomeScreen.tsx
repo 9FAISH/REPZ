@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { getProfile, dayTotals, listWeighIns, activityDates } from '../db/repo'
+import { getProfile, dayTotals, listWeighIns, activityDates, getDraft } from '../db/repo'
+import { SLOT_DEFS } from '../lib/slots'
 import {
   proteinTargetG,
   weightTrendKgPerWeek,
@@ -41,10 +42,6 @@ function kiloSpeech(dayType: DayType | null, streak: number): string {
   return streak >= 2 ? `${streak} days straight. ${daily}` : daily
 }
 
-// Slot counts per day type come alive in Phase 3's builder; the dashboard
-// shows the day's empty slot bar until then.
-const SLOT_COUNT = 5
-
 export function HomeScreen() {
   const navigate = useNavigate()
   const dateKey = useTodayKey()
@@ -52,11 +49,16 @@ export function HomeScreen() {
   const totals = useLiveQuery(() => dayTotals(dateKey), [dateKey])
   const weighIns = useLiveQuery(listWeighIns, [])
   const activity = useLiveQuery(activityDates, [])
+  const dayTypeForDraft = profile ? todayDayType(profile.split) : null
+  const draft = useLiveQuery(
+    async () => (dayTypeForDraft ? ((await getDraft(dayTypeForDraft)) ?? null) : null),
+    [dayTypeForDraft],
+  )
 
   if (!profile) return null // AppShell guard redirects when there's no profile
 
   const streak = activity ? currentStreak(activity) : 0
-  const dayType = todayDayType(profile.split)
+  const dayType = dayTypeForDraft
   const proteinTarget = proteinTargetG(profile)
   const proteinEaten = Math.round(totals?.proteinG ?? 0)
   const proteinPct = Math.min(100, Math.round((proteinEaten / proteinTarget) * 100))
@@ -84,16 +86,32 @@ export function HomeScreen() {
             <div className="home-workout-label">TODAY · {DAY_TYPE_LABELS[dayType].toUpperCase()}</div>
             <div className="home-workout-time">{profile.daysPerWeek} days/wk</div>
           </div>
-          <div className="home-workout-count">0 of {SLOT_COUNT} slots filled</div>
+          <div className="home-workout-count">
+            {draft?.filter((s) => s.exerciseId).length ?? 0} of {SLOT_DEFS[dayType].length} slots filled
+          </div>
           <div className="home-slotbar">
-            {Array.from({ length: SLOT_COUNT }, (_, i) => (
-              <div key={i} className="home-slotseg" />
+            {SLOT_DEFS[dayType].map((_, i) => (
+              <div
+                key={i}
+                className={`home-slotseg${draft?.[i]?.exerciseId ? ' home-slotseg-filled' : ''}`}
+              />
             ))}
           </div>
           <div className="home-workout-actions">
-            <button className="btn-primary home-start" onClick={() => navigate('/train')}>
-              Build workout
-            </button>
+            {draft?.some((s) => s.exerciseId) ? (
+              <>
+                <button className="btn-primary home-start" onClick={() => navigate('/train/live')}>
+                  Start workout
+                </button>
+                <button className="btn-secondary home-edit" onClick={() => navigate('/train')}>
+                  Edit slots
+                </button>
+              </>
+            ) : (
+              <button className="btn-primary home-start" onClick={() => navigate('/train')}>
+                Build workout
+              </button>
+            )}
           </div>
         </section>
       ) : (

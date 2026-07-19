@@ -9,6 +9,7 @@ import type {
   WeighIn,
   NutritionEntry,
   DayType,
+  TemplateSlot,
 } from './types'
 
 /** Typed data-access helpers. Screens call these — never Dexie directly —
@@ -69,6 +70,15 @@ export const replaceEquipment = (items: EquipmentItem[]) =>
     await db.equipment.clear()
     await db.equipment.bulkPut(items)
   })
+
+// ── Workout drafts (the in-progress build for a day type, kv-backed) ──
+const draftKey = (dayType: DayType) => `draft.${dayType}`
+
+export const getDraft = async (dayType: DayType) =>
+  (await db.kv.get(draftKey(dayType)))?.value as TemplateSlot[] | undefined
+
+export const saveDraft = (dayType: DayType, slots: TemplateSlot[]) =>
+  db.kv.put({ key: draftKey(dayType), value: slots })
 
 // ── Exercises (read-only catalog, seeded from static JSON) ──
 export const getExercise = (exerciseId: string) => db.exercises.get(exerciseId)
