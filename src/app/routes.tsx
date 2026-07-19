@@ -5,7 +5,7 @@ import { HomeScreen } from '../screens/HomeScreen'
 import { BuilderScreen } from '../screens/train/BuilderScreen'
 import { ExerciseDetailScreen } from '../screens/train/ExerciseDetailScreen'
 import { LibraryScreen } from '../screens/train/LibraryScreen'
-import { LiveStub } from '../screens/train/LiveStub'
+import { LiveScreen } from '../screens/train/LiveScreen'
 import { FoodScreen } from '../screens/FoodScreen'
 import { ProgressScreen } from '../screens/ProgressScreen'
 
@@ -20,7 +20,7 @@ export const router = createHashRouter([
       { path: 'train', element: <BuilderScreen /> },
       { path: 'train/exercise/:exerciseId', element: <ExerciseDetailScreen /> },
       { path: 'train/library', element: <LibraryScreen /> },
-      { path: 'train/live', element: <LiveStub /> },
+      { path: 'train/live', element: <LiveScreen /> },
       { path: 'food', element: <FoodScreen /> },
       { path: 'progress', element: <ProgressScreen /> },
     ],

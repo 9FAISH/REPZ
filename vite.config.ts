@@ -29,6 +29,8 @@ export default defineConfig({
         // full app — catalog included — works offline after first load.
         globPatterns: ['**/*.{js,css,html,png,webp,svg,woff2,json}'],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+        // rest-timer notification action relay (see src/lib/liveSession)
+        importScripts: ['sw-notifications.js'],
       },
     }),
   ],

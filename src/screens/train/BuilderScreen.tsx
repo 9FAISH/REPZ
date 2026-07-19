@@ -200,7 +200,7 @@ export function BuilderScreen() {
       <button
         className="btn-primary"
         disabled={filled === 0}
-        onClick={() => navigate('/train/live')}
+        onClick={() => navigate('/train/live', { state: { dayType } })}
       >
         Start workout · {filled} exercise{filled === 1 ? '' : 's'}
       </button>

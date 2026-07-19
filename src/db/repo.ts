@@ -143,6 +143,17 @@ export const setsForSession = (sessionId: number) =>
 export const setsForExercise = (exerciseId: string) =>
   db.setLogs.where('exerciseId').equals(exerciseId).sortBy('loggedAt')
 
+/** The most recent past sets of an exercise outside the given session —
+ *  feeds the progressive-overload suggestion. */
+export async function previousSetsForExercise(
+  exerciseId: string,
+  excludeSessionId: number,
+  limit = 3,
+): Promise<SetLog[]> {
+  const all = await db.setLogs.where('exerciseId').equals(exerciseId).sortBy('loggedAt')
+  return all.filter((s) => s.sessionId !== excludeSessionId).slice(-limit)
+}
+
 export const listSessions = (status?: WorkoutSession['status']) =>
   status
     ? db.sessions.where('status').equals(status).reverse().sortBy('startedAt')
