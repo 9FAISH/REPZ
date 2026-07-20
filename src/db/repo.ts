@@ -66,14 +66,27 @@ export const replaceEquipment = (items: EquipmentItem[]) =>
     await db.equipment.bulkPut(items)
   })
 
-// ── Workout drafts (the in-progress build for a day type, kv-backed) ──
-const draftKey = (dayType: DayType) => `draft.${dayType}`
+// ── Weekly plan (which day type each weekday is; Monday-first) ──
+const PLAN_KEY = 'plan.weekly'
 
-export const getDraft = async (dayType: DayType) =>
-  (await db.kv.get(draftKey(dayType)))?.value as TemplateSlot[] | undefined
+/** null = no custom plan saved (use the split default). Callers use
+ *  undefined to mean "still loading", so this must never return undefined. */
+export const getWeeklyPlan = async (): Promise<(DayType | null)[] | null> =>
+  ((await db.kv.get(PLAN_KEY))?.value as (DayType | null)[] | undefined) ?? null
 
-export const saveDraft = (dayType: DayType, slots: TemplateSlot[]) =>
-  db.kv.put({ key: draftKey(dayType), value: slots })
+export const saveWeeklyPlan = (plan: (DayType | null)[]) =>
+  db.kv.put({ key: PLAN_KEY, value: plan })
+
+// ── Workout drafts ──
+// Keyed by WEEKDAY, not day type, so a plan with two push days keeps two
+// independently editable slot lists.
+const dayDraftKey = (weekday: number) => `draft.day.${weekday}`
+
+export const getDayDraft = async (weekday: number) =>
+  (await db.kv.get(dayDraftKey(weekday)))?.value as TemplateSlot[] | undefined
+
+export const saveDayDraft = (weekday: number, slots: TemplateSlot[]) =>
+  db.kv.put({ key: dayDraftKey(weekday), value: slots })
 
 // ── Exercises (read-only catalog, seeded from static JSON) ──
 export const getExercise = (exerciseId: string) => db.exercises.get(exerciseId)

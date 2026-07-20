@@ -1,0 +1,94 @@
+.plan-back {
+  align-self: flex-start;
+}
+
+.plan-sub {
+  font-size: var(--fs-sub);
+  color: var(--text-muted);
+  margin-top: -8px;
+  line-height: 1.5;
+}
+
+.plan-days {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-day {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+}
+
+.plan-day-today {
+  border-color: var(--accent-border-45);
+  box-shadow: var(--accent-glow-sm);
+}
+
+.plan-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.plan-day-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.plan-today-tag {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  background: var(--accent-tint-12);
+  border: 1px solid var(--accent-border-35);
+  border-radius: var(--r-pill);
+  padding: 3px 7px;
+}
+
+.plan-edit {
+  background: none;
+  border: none;
+  padding: 6px 0 6px 12px;
+  color: var(--accent);
+  font-size: var(--fs-small);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.plan-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.plan-choice {
+  padding: 9px 12px;
+  border-radius: var(--r-xs);
+  background: var(--elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.plan-choice-on {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+  font-weight: 900;
+}
+
+.plan-note {
+  font-size: var(--fs-small);
+  color: var(--text-faint);
+  line-height: 1.5;
+}

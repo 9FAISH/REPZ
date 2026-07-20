@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { listTemplates, setTemplateFavorite, deleteTemplate, saveDraft } from '../../db/repo'
-import { DAY_TYPE_LABELS } from '../../lib/stats'
+import {
+  listTemplates,
+  setTemplateFavorite,
+  deleteTemplate,
+  saveDayDraft,
+  getWeeklyPlan,
+  getProfile,
+} from '../../db/repo'
+import { DAY_TYPE_LABELS, planFor, weekdayIndex } from '../../lib/stats'
 import type { WorkoutTemplate } from '../../db/types'
 import './LibraryScreen.css'
 
@@ -22,10 +29,14 @@ export function LibraryScreen() {
   const templates = [...raw].sort((a, b) => Number(b.favorite) - Number(a.favorite))
 
   const load = async (t: WorkoutTemplate) => {
-    await saveDraft(t.dayType, t.slots)
-    // Hand the day type over so the builder shows the loaded workout even
-    // when it isn't today's session.
-    navigate('/train', { state: { dayType: t.dayType } })
+    // Load into the next weekday planned for this day type, else today.
+    const profile = await getProfile()
+    const plan = planFor((await getWeeklyPlan()) ?? undefined, profile?.split ?? 'ppl')
+    const today = weekdayIndex()
+    const order = Array.from({ length: 7 }, (_, k) => (today + k) % 7)
+    const target = order.find((d) => plan[d] === t.dayType) ?? today
+    await saveDayDraft(target, t.slots)
+    navigate(`/train?day=${target}`)
   }
 
   return (

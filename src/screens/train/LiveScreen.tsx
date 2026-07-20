@@ -5,7 +5,8 @@ import { db } from '../../db/db'
 import {
   getProfile,
   getActiveSession,
-  getDraft,
+  getWeeklyPlan,
+  getDayDraft,
   startSession,
   endSession,
   logSet,
@@ -14,8 +15,7 @@ import {
   kvGet,
   kvSet,
 } from '../../db/repo'
-import { DAY_TYPE_LABELS, todayDayType } from '../../lib/stats'
-import { builderDayType } from './BuilderScreen'
+import { DAY_TYPE_LABELS, planFor, weekdayIndex } from '../../lib/stats'
 import { RestTimer } from '../../lib/liveSession/restTimer'
 import { suggestNext, type OverloadSuggestion } from '../../lib/liveSession/overload'
 import {
@@ -95,18 +95,23 @@ export function LiveScreen() {
         }
         return
       }
-      const dayType =
-        (location.state as { dayType?: ReturnType<typeof todayDayType> } | null)?.dayType ??
-        builderDayType(profile)
-      const draft = dayType ? await getDraft(dayType) : undefined
+      // Which day are we running? The builder hands its weekday over;
+      // otherwise it's today.
+      const stateWeekday = (location.state as { weekday?: number } | null)?.weekday
+      const weekday = Number.isInteger(stateWeekday) ? (stateWeekday as number) : weekdayIndex()
+      const plan = planFor((await getWeeklyPlan()) ?? undefined, profile.split)
+      const dayType = plan[weekday] ?? 'full'
+      const draft = await getDayDraft(weekday)
       const exerciseIds = (draft ?? []).map((s) => s.exerciseId).filter(Boolean) as string[]
       if (exerciseIds.length === 0) {
         if (!cancelled) setSession(null)
         return
       }
-      const id = await startSession({ name: DAY_TYPE_LABELS[dayType!], dayType: dayType!, exerciseIds })
-      const created = { id, name: DAY_TYPE_LABELS[dayType!], dayType: dayType!, exerciseIds, status: 'active' as const, startedAt: Date.now() }
-      if (!cancelled) setSession(created)
+      const name = DAY_TYPE_LABELS[dayType]
+      const id = await startSession({ name, dayType, exerciseIds })
+      if (!cancelled) {
+        setSession({ id, name, dayType, exerciseIds, status: 'active' as const, startedAt: Date.now() })
+      }
     })()
     return () => {
       cancelled = true

@@ -1,12 +1,20 @@
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { getProfile, dayTotals, listWeighIns, activityDates, getDraft } from '../db/repo'
-import { SLOT_DEFS } from '../lib/slots'
+import {
+  getProfile,
+  dayTotals,
+  listWeighIns,
+  activityDates,
+  getDayDraft,
+  getWeeklyPlan,
+} from '../db/repo'
+import { emptySlots } from '../lib/slots'
 import {
   weightTrendKgPerWeek,
   onPace,
   currentStreak,
-  todayDayType,
+  planFor,
+  weekdayIndex,
   DAY_TYPE_LABELS,
 } from '../lib/stats'
 import { effectiveTargets } from '../lib/nutrition'
@@ -54,10 +62,16 @@ export function HomeScreen() {
   const activity = useLiveQuery(activityDates, [])
   const adaptation = useLiveQuery(getAdaptation, [])
   const mascotStats = useMascotStats()
-  const dayTypeForDraft = profile ? todayDayType(profile.split) : null
+  const storedPlan = useLiveQuery(getWeeklyPlan, [])
+  const today = weekdayIndex()
+  const dayTypeForDraft =
+    profile && storedPlan !== undefined
+      ? (planFor(storedPlan ?? undefined, profile.split)[today] ?? null)
+      : null
   const draft = useLiveQuery(
-    async () => (dayTypeForDraft ? ((await getDraft(dayTypeForDraft)) ?? null) : null),
-    [dayTypeForDraft],
+    async () =>
+      dayTypeForDraft ? ((await getDayDraft(today)) ?? emptySlots(dayTypeForDraft)) : null,
+    [dayTypeForDraft, today],
   )
 
   if (!profile) return null // AppShell guard redirects when there's no profile
@@ -98,14 +112,11 @@ export function HomeScreen() {
             <div className="home-workout-time">{profile.daysPerWeek} days/wk</div>
           </div>
           <div className="home-workout-count">
-            {draft?.filter((s) => s.exerciseId).length ?? 0} of {SLOT_DEFS[dayType].length} slots filled
+            {draft?.filter((s) => s.exerciseId).length ?? 0} of {draft?.length ?? 0} slots filled
           </div>
           <div className="home-slotbar">
-            {SLOT_DEFS[dayType].map((_, i) => (
-              <div
-                key={i}
-                className={`home-slotseg${draft?.[i]?.exerciseId ? ' home-slotseg-filled' : ''}`}
-              />
+            {(draft ?? []).map((s, i) => (
+              <div key={i} className={`home-slotseg${s.exerciseId ? ' home-slotseg-filled' : ''}`} />
             ))}
           </div>
           <div className="home-workout-actions">

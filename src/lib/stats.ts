@@ -47,18 +47,34 @@ export function currentStreak(activityDates: Iterable<string>, today: Date = new
   return streak
 }
 
-/** v1 weekly schedule per split (Mon-first). Phase 3's builder attaches
- *  actual slot templates to these day types. */
-const SCHEDULES: Record<Profile['split'], (DayType | null)[]> = {
+/** Default weekly schedule per split (Mon-first). Used until the user edits
+ *  their own plan, which is stored in Dexie and takes precedence. */
+export const SCHEDULES: Record<Profile['split'], (DayType | null)[]> = {
   // Mon        Tue      Wed      Thu      Fri      Sat      Sun
   full_body: ['full', null, 'full', null, 'full', null, null],
   upper_lower: ['upper', 'lower', null, 'upper', 'lower', null, null],
   ppl: ['push', 'pull', 'legs', null, 'push', 'pull', null],
 }
 
-export function todayDayType(split: Profile['split'], date: Date = new Date()): DayType | null {
-  const monFirst = (date.getDay() + 6) % 7
-  return SCHEDULES[split][monFirst]
+/** Monday-first weekday index (0 = Mon … 6 = Sun). */
+export const weekdayIndex = (date: Date = new Date()) => (date.getDay() + 6) % 7
+
+export const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+/** The plan for a weekday — the user's saved plan if any, else the split default. */
+export function planFor(
+  plan: (DayType | null)[] | undefined,
+  split: Profile['split'],
+): (DayType | null)[] {
+  return plan && plan.length === 7 ? plan : SCHEDULES[split]
+}
+
+export function todayDayType(
+  split: Profile['split'],
+  date: Date = new Date(),
+  plan?: (DayType | null)[],
+): DayType | null {
+  return planFor(plan, split)[weekdayIndex(date)]
 }
 
 export const DAY_TYPE_LABELS: Record<DayType, string> = {

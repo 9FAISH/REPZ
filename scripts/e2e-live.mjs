@@ -30,9 +30,10 @@ const seeded = await page.evaluate(async () => {
   const barb = all.find((e) => e.equipments.includes('BARBELL'))
   const dumb = all.find((e) => e.equipments.includes('DUMBBELL'))
   const dayType = 'push'
-  await repo.saveDraft(dayType, [
-    { region: 'Slot 1', exerciseId: barb.exerciseId },
-    { region: 'Slot 2', exerciseId: dumb.exerciseId },
+  await repo.saveWeeklyPlan(Array(7).fill(dayType))
+  await repo.saveDayDraft((new Date().getDay() + 6) % 7, [
+    { region: 'Chest', exerciseId: barb.exerciseId },
+    { region: 'Biceps', exerciseId: dumb.exerciseId },
   ])
   // Previous all-easy session at 20 kg → expect a 22.5 kg suggestion
   const sid = await repo.startSession({ name: 'Push', dayType, exerciseIds: [barb.exerciseId] })

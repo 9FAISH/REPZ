@@ -72,6 +72,74 @@ export const SLOT_DEFS: Record<DayType, SlotDef[]> = {
 export const emptySlots = (dayType: DayType): TemplateSlot[] =>
   SLOT_DEFS[dayType].map((s) => ({ region: s.region, exerciseId: null }))
 
+/** Every region a slot can be set to, grouped for the region picker.
+ *  SLOT_DEFS above are just the sensible defaults per day type — the user
+ *  can point any slot at any of these. */
+export const REGION_GROUPS: { group: string; regions: SlotDef[] }[] = [
+  {
+    group: 'Chest',
+    regions: [
+      { region: 'Upper chest', muscles: CHEST_UPPER },
+      { region: 'Lower chest', muscles: CHEST_LOWER },
+      { region: 'Chest', muscles: [...CHEST_UPPER, ...CHEST_LOWER] },
+    ],
+  },
+  {
+    group: 'Back',
+    regions: [
+      { region: 'Lats', muscles: LATS },
+      { region: 'Upper back', muscles: UPPER_BACK },
+      { region: 'Lower back', muscles: LOWER_BACK },
+      { region: 'Back', muscles: [...LATS, ...UPPER_BACK] },
+      { region: 'Traps', muscles: ['TRAPEZIUS UPPER FIBERS'] },
+    ],
+  },
+  {
+    group: 'Shoulders',
+    regions: [
+      { region: 'Front delts', muscles: DELT_FRONT },
+      { region: 'Side delts', muscles: DELT_SIDE },
+      { region: 'Rear delts', muscles: DELT_REAR },
+      { region: 'Shoulders', muscles: [...DELT_FRONT, ...DELT_SIDE, ...DELT_REAR] },
+    ],
+  },
+  {
+    group: 'Arms',
+    regions: [
+      { region: 'Biceps', muscles: BICEPS },
+      { region: 'Triceps', muscles: TRICEPS },
+      { region: 'Forearms', muscles: ['BRACHIORADIALIS', 'WRIST FLEXORS', 'WRIST EXTENSORS'] },
+    ],
+  },
+  {
+    group: 'Legs',
+    regions: [
+      { region: 'Quads', muscles: QUADS },
+      { region: 'Hamstrings', muscles: HAMSTRINGS },
+      { region: 'Glutes', muscles: GLUTES },
+      { region: 'Calves', muscles: CALVES },
+      { region: 'Legs', muscles: [...QUADS, ...HAMSTRINGS, ...GLUTES] },
+    ],
+  },
+  {
+    group: 'Core',
+    regions: [
+      { region: 'Core', muscles: CORE },
+      { region: 'Abs', muscles: ['RECTUS ABDOMINIS'] },
+      { region: 'Obliques', muscles: ['OBLIQUES'] },
+    ],
+  },
+]
+
+const REGION_INDEX = new Map(
+  REGION_GROUPS.flatMap((g) => g.regions).map((r) => [r.region, r.muscles]),
+)
+
+/** Muscles for a region name, whether it came from a default or a user pick. */
+export function musclesForRegion(region: string): string[] {
+  return REGION_INDEX.get(region) ?? []
+}
+
 /** Does the exercise's full equipment list pass the availability set? */
 export const equipmentOk = (ex: Exercise, available: Set<string>) =>
   ex.equipments.every((q) => available.has(q))

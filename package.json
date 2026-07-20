@@ -13,7 +13,7 @@
     "build:catalog": "node scripts/add-machine-exercises.mjs --all --replace-others",
     "smoke:db": "node scripts/smoke-db.mjs",
     "test:unit": "node scripts/test-livesession.mjs && node scripts/test-nutrition.mjs && node scripts/test-progress.mjs",
-    "test:e2e": "node scripts/e2e-setup.mjs && node scripts/e2e-builder.mjs && node scripts/e2e-live.mjs && node scripts/e2e-nutrition.mjs && node scripts/e2e-progress.mjs",
+    "test:e2e": "node scripts/e2e-setup.mjs && node scripts/e2e-builder.mjs && node scripts/e2e-planner.mjs && node scripts/e2e-live.mjs && node scripts/e2e-nutrition.mjs && node scripts/e2e-progress.mjs",
     "native:sync": "npm run build && npx cap sync",
     "native:ios": "npm run native:sync && npx cap open ios",
     "native:android": "npm run native:sync && npx cap open android"

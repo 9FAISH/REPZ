@@ -1,0 +1,112 @@
+.region-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  background: rgba(5, 6, 8, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  touch-action: none;
+}
+
+.region-sheet {
+  background: var(--sheet);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 18px calc(32px + env(safe-area-inset-bottom));
+  max-height: 76%;
+  display: flex;
+  flex-direction: column;
+  animation: kin 0.25s ease;
+}
+
+.region-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-dashed);
+  margin: 0 auto 14px;
+}
+
+.region-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.region-label {
+  font-size: var(--fs-label);
+  font-weight: 900;
+  letter-spacing: var(--ls-label);
+  color: var(--accent);
+}
+
+.region-title {
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+  margin-top: 3px;
+}
+
+.region-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.region-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.region-group-name {
+  font-size: var(--fs-tiny);
+  font-weight: 900;
+  letter-spacing: var(--ls-label);
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+
+.region-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.region-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 11px 14px;
+  border-radius: var(--r-xs);
+  background: var(--sheet-item);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-body);
+  font-size: var(--fs-sub);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.region-chip-on {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+  font-weight: 900;
+}
+
+.region-taken {
+  color: var(--warn);
+  font-size: 16px;
+  line-height: 1;
+}

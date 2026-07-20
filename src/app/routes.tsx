@@ -9,6 +9,7 @@ const SetupScreen = lazy(() => import('../screens/setup/SetupScreen').then((m) =
 const BuilderScreen = lazy(() => import('../screens/train/BuilderScreen').then((m) => ({ default: m.BuilderScreen })))
 const ExerciseDetailScreen = lazy(() => import('../screens/train/ExerciseDetailScreen').then((m) => ({ default: m.ExerciseDetailScreen })))
 const LibraryScreen = lazy(() => import('../screens/train/LibraryScreen').then((m) => ({ default: m.LibraryScreen })))
+const PlanScreen = lazy(() => import('../screens/train/PlanScreen').then((m) => ({ default: m.PlanScreen })))
 const LiveScreen = lazy(() => import('../screens/train/LiveScreen').then((m) => ({ default: m.LiveScreen })))
 const FoodScreen = lazy(() => import('../screens/food/FoodScreen').then((m) => ({ default: m.FoodScreen })))
 const ProgressScreen = lazy(() => import('../screens/progress/ProgressScreen').then((m) => ({ default: m.ProgressScreen })))
@@ -26,6 +27,7 @@ export const router = createHashRouter([
       { path: 'train', element: <BuilderScreen /> },
       { path: 'train/exercise/:exerciseId', element: <ExerciseDetailScreen /> },
       { path: 'train/library', element: <LibraryScreen /> },
+      { path: 'train/plan', element: <PlanScreen /> },
       { path: 'train/live', element: <LiveScreen /> },
       { path: 'food', element: <FoodScreen /> },
       { path: 'progress', element: <ProgressScreen /> },

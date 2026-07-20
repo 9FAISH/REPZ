@@ -63,6 +63,64 @@
   cursor: pointer;
 }
 
+.picker-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 0 12px;
+  border-radius: var(--r-sm);
+  background: var(--sheet-item);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.picker-search-icon {
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.picker-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+.picker-search-input::placeholder {
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.picker-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.picker-search-clear {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--elevated);
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.picker-section-label {
+  font-size: var(--fs-tiny);
+  font-weight: 900;
+  letter-spacing: var(--ls-label);
+  color: var(--text-faint);
+  margin-top: 8px;
+}
+
 .picker-list {
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -138,14 +196,6 @@
   font-weight: 900;
   cursor: pointer;
   flex-shrink: 0;
-}
-
-.picker-blocked-label {
-  font-size: var(--fs-tiny);
-  font-weight: 900;
-  letter-spacing: var(--ls-label);
-  color: var(--text-faint);
-  margin-top: 8px;
 }
 
 .picker-blocked-row {

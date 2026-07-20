@@ -1,9 +1,8 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { getExercise, getDraft, saveDraft } from '../../db/repo'
+import { getExercise, getDayDraft, saveDayDraft } from '../../db/repo'
 import { exerciseImage, exerciseVideo } from '../../lib/media'
 import { joinEquipments, sentenceCase } from '../../lib/format'
-import type { DayType } from '../../db/types'
 import './ExerciseDetailScreen.css'
 
 /** exerciseTips mixes coaching cues with mistake/injury warnings — split
@@ -26,7 +25,7 @@ export function ExerciseDetailScreen() {
   const { exerciseId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
-  const slotCtx = location.state as { slotIndex: number; dayType: DayType } | null
+  const slotCtx = location.state as { slotIndex: number; weekday: number } | null
   // Map "missing" to null so it's distinguishable from "still loading".
   const ex = useLiveQuery(async () => (await getExercise(exerciseId!)) ?? null, [exerciseId])
 
@@ -46,11 +45,11 @@ export function ExerciseDetailScreen() {
 
   const fillSlot = async () => {
     if (!slotCtx) return
-    const draft = await getDraft(slotCtx.dayType)
+    const draft = await getDayDraft(slotCtx.weekday)
     if (!draft) return
     const next = draft.map((s, i) => (i === slotCtx.slotIndex ? { ...s, exerciseId: ex.exerciseId } : s))
-    await saveDraft(slotCtx.dayType, next)
-    navigate('/train')
+    await saveDayDraft(slotCtx.weekday, next)
+    navigate(`/train?day=${slotCtx.weekday}`)
   }
 
   return (

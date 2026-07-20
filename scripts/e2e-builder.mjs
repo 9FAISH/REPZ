@@ -29,8 +29,11 @@ await page.evaluate(async () => {
 })
 
 // Builder (Sunday is rest on PPL → builds next scheduled day: Push)
+// Deterministic: make every weekday a Push day, edit today's
+await page.evaluate(() => window.repz.repo.saveWeeklyPlan(Array(7).fill('push')))
 await page.goto('http://localhost:5173/#/train', { waitUntil: 'networkidle' })
 await page.getByText('One exercise per muscle slot').waitFor()
+await page.evaluate(() => { window.__wd = (new Date().getDay() + 6) % 7 })
 const title = await page.locator('.screen-title').textContent()
 if (title !== 'Push') fail(`builder title "${title}", want "Push"`)
 
@@ -52,7 +55,7 @@ if (lockedName !== pickedName) fail(`locked "${lockedName}" ≠ picked "${picked
 await page.getByRole('button', { name: /Generate for me/ }).click()
 await page.getByRole('button', { name: /Start workout · 5 exercises/ }).waitFor({ timeout: 4000 })
 const dupes = await page.evaluate(async () => {
-  const draft = await window.repz.repo.getDraft('push')
+  const draft = await window.repz.repo.getDayDraft(window.__wd)
   const ids = draft.map((s) => s.exerciseId).filter(Boolean)
   return { total: ids.length, unique: new Set(ids).size }
 })
@@ -69,7 +72,7 @@ await page.locator('.builder-swap').first().click()
 await page.getByText('FILL SLOT').waitFor()
 await page.locator('.picker-close').click()
 const afterCancel = await page.evaluate(async () => {
-  const draft = await window.repz.repo.getDraft('push')
+  const draft = await window.repz.repo.getDayDraft(window.__wd)
   return draft.filter((s) => s.exerciseId).length
 })
 if (afterCancel !== 5) fail(`swap-cancel dropped a pick: ${afterCancel}/5 filled`)
@@ -84,15 +87,15 @@ await page.screenshot({ path: `${SHOT_DIR}/e2e-detail.png` })
 await page.getByRole('button', { name: 'Fill slot with this →' }).click()
 await page.getByText('LOCKED').first().waitFor()
 const refilled = await page.evaluate(async () => {
-  const draft = await window.repz.repo.getDraft('push')
+  const draft = await window.repz.repo.getDayDraft(window.__wd)
   return draft.filter((s) => s.exerciseId).length
 })
 if (refilled !== 5) fail(`fill-from-detail left ${refilled}/5 filled`)
 
 // Save to favorites → library shows it, Load works
-await page.getByRole('button', { name: 'Save', exact: true }).click()
+await page.getByRole('button', { name: /^Save workout/ }).click()
 await page.getByText('Saved ★').waitFor()
-await page.getByRole('button', { name: 'Saved workouts' }).click()
+await page.getByRole('button', { name: 'Saved', exact: true }).click()
 await page.getByText('Push A').waitFor()
 const starred = await page.locator('.lib-star-on').count()
 if (starred !== 1) fail(`starred count ${starred}`)
