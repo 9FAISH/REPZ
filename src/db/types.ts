@@ -21,6 +21,9 @@ export interface Exercise {
   videoUrl?: string
   /** Provenance when the record came from a merged dataset. */
   source?: string
+  /** Coaching metadata used to rank auto-fill picks. */
+  level?: 'beginner' | 'intermediate' | 'expert'
+  mechanic?: 'compound' | 'isolation'
 }
 
 export type Sex = 'male' | 'female'

@@ -32,39 +32,40 @@ npm run build     # type-check + production build (dist/)
 npm run preview   # serve the production build
 ```
 
-## Exercise catalog (build-time pipeline)
+## Exercise catalog
 
-The app never calls the ExerciseDB API at runtime — a build-time script fetches
-the catalog and commits it as static JSON (`public/data/`), which seeds IndexedDB
-on first load. The RapidAPI key lives only in a gitignored `.env`.
+The catalog is committed static JSON (`public/data/`) that seeds IndexedDB on
+first load — the app makes **no API calls at runtime**, and now none at build
+time either.
 
-```sh
-cp .env.example .env  # then paste your RapidAPI key (free Basic plan works)
-npm run fetch:exercises            # throttled + resumable; safe to interrupt
-npm run fetch:exercises -- --status   # show cached progress
-```
-
-Free-tier notes (observed): 2,000 requests/month, catalog capped at **200**
-exercises, burst limit on the detail endpoint (script paces details at 15s and
-rides out `MITIGATION_REDIRECT` cooloffs). Media is watermarked. Their Pro tier
-is **$100/month** and raises the library only to 500, so it isn't worth it for
-personal use — machine coverage comes from the free dataset below instead.
-
-### Machine & cable exercises (free, public domain)
-
-The ExerciseDB free tier ships just 1 machine + 3 cable exercises. This merges
-in [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense /
-public domain — no key, no quota):
+The current catalog is **597 exercises from
+[free-exercise-db](https://github.com/yuhonas/free-exercise-db)** (Unlicense /
+public domain): no API key, no quota, no watermarks, no licensing questions.
 
 ```sh
-npm run add:machines              # merges ~139 machine + cable exercises
-npm run add:machines -- --dry-run # report only
+npm run build:catalog              # rebuild from free-exercise-db (597 exercises)
+npm run add:machines               # or merge only machine + cable into an existing catalog
+npm run add:machines -- --dry-run  # report only
 ```
 
-Images are downloaded and re-encoded locally (480 px webp, ~3 MB total) rather
-than hotlinked, so they stay in the offline precache. The merge is idempotent,
-and `fetch:exercises` preserves merged records, so the two scripts can run in
-any order.
+Images are downloaded and re-encoded locally (400 px webp, ~7.5 MB total)
+rather than hotlinked, so they stay in the offline precache.
+
+<details>
+<summary>Optional: ExerciseDB / AscendAPI (adds videos + form tips)</summary>
+
+The original pipeline is still here. It adds demo videos and `exerciseTips`
+(form cues + injury warnings) that free-exercise-db lacks, but its free tier
+caps the library at 200 watermarked exercises, and Pro is **$100/month** for a
+500-exercise cap. `fetch:exercises` merges alongside the free dataset rather
+than replacing it.
+
+```sh
+cp .env.example .env               # RapidAPI key, build-time only
+npm run fetch:exercises            # throttled + resumable
+npm run fetch:exercises -- --status
+```
+</details>
 
 ## Verify
 

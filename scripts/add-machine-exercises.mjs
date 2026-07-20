@@ -35,11 +35,24 @@ const SOURCE = 'free-exercise-db'
 const DATA_URL = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json'
 const IMG_BASE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/'
 
-/** Equipment we want from this dataset — the gap in our catalog. */
+/** free-exercise-db equipment → the catalog's canonical UPPERCASE names.
+ *  `--all` imports every entry here; the default imports only the machine
+ *  and cable gap. Unlisted values ("other", null) are skipped as ambiguous. */
 const EQUIPMENT_MAP = {
   machine: ['LEVERAGE MACHINE'],
   cable: ['CABLE'],
+  barbell: ['BARBELL'],
+  dumbbell: ['DUMBBELL'],
+  'body only': ['BODY WEIGHT'],
+  kettlebells: ['KETTLEBELL'],
+  bands: ['BAND'],
+  'e-z curl bar': ['EZ BARBELL'],
+  'medicine ball': ['MEDICINE BALL'],
+  'exercise ball': ['STABILITY BALL'],
 }
+
+/** Default scope: just the machine/cable gap. */
+const GAP_EQUIPMENT = new Set(['machine', 'cable'])
 
 /** Only real resistance work; skip stretching/cardio/plyometrics. */
 const KEEP_CATEGORIES = new Set(['strength', 'powerlifting', 'olympic weightlifting'])
@@ -125,9 +138,10 @@ async function localImage(exerciseId, remotePath) {
   const tmp = path.join(IMG_DIR, `${exerciseId}.tmp`)
   writeFileSync(tmp, Buffer.from(await res.arrayBuffer()))
   try {
-    // 480px wide webp keeps the whole set a few MB so it can live in the
-    // service worker precache alongside everything else.
-    execFileSync('magick', [tmp, '-resize', '480x', '-quality', '80', outPath], { stdio: 'ignore' })
+    // 400px webp keeps the whole set small enough to live in the service
+    // worker precache — the app renders these at 56px thumbnails and ~230px
+    // on the detail screen, so more resolution would be wasted bytes.
+    execFileSync('magick', [tmp, '-resize', '400x', '-quality', '74', outPath], { stdio: 'ignore' })
     return rel
   } catch {
     return undefined
@@ -137,12 +151,21 @@ async function localImage(exerciseId, remotePath) {
 }
 
 const dryRun = process.argv.includes('--dry-run')
+const importAll = process.argv.includes('--all')
+/** Drop records that came from other sources (i.e. the ExerciseDB API), so
+ *  the catalog becomes a single public-domain dataset. */
+const replaceOthers = process.argv.includes('--replace-others')
 const raw = await loadSource()
 
 const wanted = raw.filter(
-  (e) => EQUIPMENT_MAP[e.equipment] && KEEP_CATEGORIES.has(e.category),
+  (e) =>
+    EQUIPMENT_MAP[e.equipment] &&
+    (importAll || GAP_EQUIPMENT.has(e.equipment)) &&
+    KEEP_CATEGORIES.has(e.category),
 )
-console.log(`${raw.length} source exercises → ${wanted.length} machine/cable strength movements`)
+console.log(
+  `${raw.length} source exercises → ${wanted.length} ${importAll ? 'strength' : 'machine/cable'} movements`,
+)
 
 if (dryRun) {
   const byEq = {}
@@ -180,13 +203,19 @@ for (const [i, e] of wanted.entries()) {
     relatedExerciseIds: [],
     imageUrl,
     source: SOURCE,
+    level: e.level ?? undefined,
+    mechanic: e.mechanic ?? undefined,
   })
   if ((i + 1) % 25 === 0) console.log(`  ${i + 1}/${wanted.length} processed…`)
 }
 
 // Merge: drop any previous records from this source, then append.
 const existing = existsSync(CATALOG) ? JSON.parse(readFileSync(CATALOG, 'utf8')) : []
-const kept = existing.filter((e) => e.source !== SOURCE)
+const kept = replaceOthers ? [] : existing.filter((e) => e.source !== SOURCE)
+if (replaceOthers) {
+  const dropped = existing.filter((e) => e.source !== SOURCE).length
+  console.log(`--replace-others: dropping ${dropped} records from other sources`)
+}
 const merged = [...kept, ...records].sort((a, b) =>
   a.exerciseId < b.exerciseId ? -1 : a.exerciseId > b.exerciseId ? 1 : 0,
 )
@@ -200,15 +229,16 @@ writeFileSync(
     count: merged.length,
     generatedAt: new Date().toISOString(),
     sources: [
-      { name: 'ExerciseDB v2 (AscendAPI via RapidAPI)', count: kept.length },
+      ...(kept.length ? [{ name: 'ExerciseDB v2 (AscendAPI via RapidAPI)', count: kept.length }] : []),
       { name: 'free-exercise-db (Unlicense/public domain)', count: records.length },
     ],
   }),
 )
 
-const machines = records.filter((r) => r.equipments.includes('LEVERAGE MACHINE')).length
-console.log(
-  `\nMerged ${records.length} exercises (${machines} machine, ${records.length - machines} cable), ` +
-    `${withImage} with images.\nCatalog: ${kept.length} + ${records.length} = ${merged.length} ` +
-    `(${(json.length / 1024).toFixed(0)} KB)`,
-)
+const byEquipment = {}
+for (const r of records) for (const q of r.equipments) byEquipment[q] = (byEquipment[q] ?? 0) + 1
+console.log(`\nMerged ${records.length} exercises (${withImage} with images):`)
+for (const [k, v] of Object.entries(byEquipment).sort((a, b) => b[1] - a[1])) {
+  console.log(`  ${String(v).padStart(4)} ${k}`)
+}
+console.log(`Catalog: ${kept.length} + ${records.length} = ${merged.length} (${(json.length / 1024).toFixed(0)} KB)`)

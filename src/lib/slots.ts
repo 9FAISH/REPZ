@@ -80,16 +80,27 @@ export const equipmentOk = (ex: Exercise, available: Set<string>) =>
  *  the catalog but out of workout-building pools. */
 export const isBuildable = (ex: Exercise) => !/stretch|mobility|warm.?up/i.test(ex.name)
 
-/** Rank candidates for auto-fill and picker ordering: media-rich, canonical
- *  movement names first. */
+/** The staple movements a lifter actually expects a slot to auto-fill with.
+ *  Matching on the whole phrase (not just "press") keeps obscure variants
+ *  like "Neck Press" or "Board Press" from outranking "Bench Press". */
+const STAPLE_MOVEMENTS =
+  /\b(bench press|chest press|incline press|shoulder press|overhead press|military press|leg press|chest fly|pec deck|cable crossover|lat pulldown|pulldown|pull.?up|chin.?up|seated row|bent.?over row|barbell row|dumbbell row|cable row|deadlift|romanian deadlift|back squat|front squat|squat|lunge|leg extension|leg curl|calf raise|hip thrust|bicep curl|hammer curl|preacher curl|tricep extension|skullcrusher|pushdown|lateral raise|front raise|rear delt|face pull|shrug|crunch|leg raise|plank|dip)\b/i
+
+/** Movements that are legitimate but rarely what someone wants auto-picked. */
+const NICHE_MOVEMENTS = /\b(neck|anti.?gravity|board press|chain|sled|jump|clean|snatch|jerk|kipping|suicide|iron cross|bradford|zercher)\b/i
+
+/** Rank candidates for auto-fill and picker ordering. */
 export function rankExercise(ex: Exercise): number {
   let score = 0
-  if (ex.imageUrl || ex.imageUrls) score += 4
+  if (ex.imageUrl || ex.imageUrls) score += 3
   if (ex.videoUrl) score += 2
   if (ex.exerciseTips.length) score += 2
-  score -= ex.name.split(/\s+/).length
-  if (/\b(press|squat|deadlift|row|pull.?up|chin.?up|curl|extension|raise|fly|dip|lunge|thrust|pulldown|pushdown|crunch|plank)\b/i.test(ex.name)) {
-    score += 4
-  }
+  if (STAPLE_MOVEMENTS.test(ex.name)) score += 10
+  if (NICHE_MOVEMENTS.test(ex.name)) score -= 8
+  if (ex.mechanic === 'compound') score += 2
+  if (ex.level === 'beginner') score += 2
+  else if (ex.level === 'expert') score -= 3
+  // Mild tiebreak toward plainer names, not enough to beat a staple match.
+  score -= ex.name.split(/\s+/).length * 0.5
   return score
 }
