@@ -50,6 +50,21 @@ button {
   overflow: hidden;
 }
 
+/* Fades scrolling content out beneath the floating tab bar and makes the
+   home-indicator strip solid — without it, cards show through the gap
+   below the translucent bar. */
+.phone-shell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(max(12px, env(safe-area-inset-bottom)) + 84px);
+  background: linear-gradient(to bottom, transparent, var(--bg-app) 45%);
+  pointer-events: none;
+  z-index: 29;
+}
+
 .screen-scroll {
   flex: 1;
   overflow-y: auto;
