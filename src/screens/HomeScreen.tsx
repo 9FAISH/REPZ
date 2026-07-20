@@ -12,6 +12,8 @@ import {
 import { effectiveTargets } from '../lib/nutrition'
 import { getAdaptation } from '../lib/nutritionStore'
 import { KiloHero } from '../components/KiloHero'
+import { DAY_TYPE_ASSET, REACTION_ASSET, pickReaction } from '../lib/mascot'
+import { useMascotStats } from '../lib/useMascotStats'
 import { useTodayKey } from '../lib/useTodayKey'
 import type { DayType } from '../db/types'
 import './HomeScreen.css'
@@ -51,6 +53,7 @@ export function HomeScreen() {
   const weighIns = useLiveQuery(listWeighIns, [])
   const activity = useLiveQuery(activityDates, [])
   const adaptation = useLiveQuery(getAdaptation, [])
+  const mascotStats = useMascotStats()
   const dayTypeForDraft = profile ? todayDayType(profile.split) : null
   const draft = useLiveQuery(
     async () => (dayTypeForDraft ? ((await getDraft(dayTypeForDraft)) ?? null) : null),
@@ -67,6 +70,11 @@ export function HomeScreen() {
   const proteinPct = Math.min(100, Math.round((proteinEaten / proteinTarget) * 100))
   const trend = weighIns ? weightTrendKgPerWeek(weighIns) : null
   const paced = onPace(trend, profile.goal)
+  // Mascot hooks: the day's training animation, or a reaction state when
+  // there's something to celebrate.
+  const reaction = mascotStats ? pickReaction(mascotStats, false) : 'idle'
+  const mascotAsset =
+    dayType && reaction === 'idle' ? DAY_TYPE_ASSET[dayType] : REACTION_ASSET[reaction]
 
   return (
     <div className="screen">
@@ -81,7 +89,7 @@ export function HomeScreen() {
         {streak >= 2 && <div className="pill-accent">{streak}-DAY STREAK</div>}
       </header>
 
-      <KiloHero speech={kiloSpeech(dayType, streak)} />
+      <KiloHero speech={kiloSpeech(dayType, streak)} asset={mascotAsset} />
 
       {dayType ? (
         <section className="home-workout-card">

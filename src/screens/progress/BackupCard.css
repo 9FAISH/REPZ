@@ -1,0 +1,87 @@
+.backup-text {
+  font-size: var(--fs-sub);
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-top: 8px;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.backup-btn {
+  flex: 1;
+  padding: 13px;
+  border-radius: var(--r-sm);
+  background: var(--elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  font-size: var(--fs-sub);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.backup-btn:disabled {
+  opacity: 0.5;
+}
+
+.backup-file {
+  display: none;
+}
+
+.backup-confirm {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: var(--warn-tint-7);
+  border: 1px solid var(--warn-border-30);
+}
+
+.backup-confirm-text {
+  font-size: var(--fs-caption);
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+.backup-confirm-text b {
+  color: var(--warn);
+}
+
+.backup-confirm-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.backup-cancel {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--r-xs);
+  background: var(--elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.backup-replace {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--r-xs);
+  background: var(--warn);
+  border: none;
+  color: #241701;
+  font-size: var(--fs-small);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.backup-message {
+  margin-top: 10px;
+  font-size: var(--fs-caption);
+  color: var(--accent);
+  font-weight: 700;
+}

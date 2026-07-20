@@ -85,3 +85,138 @@
 .progress-note b {
   color: var(--text-muted);
 }
+
+/* ── Training stats ── */
+.progress-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.progress-stat {
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: var(--pad-card);
+  cursor: default;
+  color: var(--text);
+}
+
+button.progress-stat {
+  cursor: pointer;
+}
+
+.progress-stat-value {
+  font-size: var(--fs-title);
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.progress-stat-note {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* ── Weekly volume ── */
+.progress-volume-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.progress-volume-tonnage {
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+  font-weight: 700;
+}
+
+.progress-volume-empty {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.progress-volume-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.progress-volume-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-volume-name {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  color: var(--text-body);
+  width: 108px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-volume-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--elevated);
+  overflow: hidden;
+}
+
+.progress-volume-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.progress-volume-count {
+  font-size: var(--fs-label);
+  font-weight: 800;
+  color: var(--text-muted);
+  width: 18px;
+  text-align: right;
+}
+
+/* ── Shelf entry ── */
+.progress-shelf {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  cursor: pointer;
+  color: var(--text);
+  text-align: left;
+}
+
+.progress-shelf-main {
+  flex: 1;
+}
+
+.progress-shelf-title {
+  font-size: 14.5px;
+  font-weight: 800;
+}
+
+.progress-shelf-meta {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.progress-shelf-arrow {
+  color: var(--text-muted);
+  font-size: 16px;
+}

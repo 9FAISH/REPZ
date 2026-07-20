@@ -4,14 +4,24 @@
   gap: 16px;
 }
 
-/* 5-frame sprite sheet; the box keeps the frame aspect ratio
-   (394.8×500 ≈ 0.79) so the mascot isn't distorted. */
 .kilo-sprite {
   flex-shrink: 0;
-  width: 98px;
-  height: 124px;
-  background: url('../assets/mascot/kilo-press-sprite.webp') 0 0 / 500% 100% no-repeat;
-  animation: kf5 1.5s steps(5) infinite;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+
+.kilo-still {
+  flex-shrink: 0;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Sprite sheets step across frames; --kilo-end is set per asset so any
+   frame count lands exactly on the last frame. */
+@keyframes kilo-frames {
+  to {
+    background-position-x: var(--kilo-end);
+  }
 }
 
 .kilo-speech {

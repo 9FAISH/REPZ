@@ -1,4 +1,6 @@
 import { formatRest } from '../../lib/liveSession/restTimer'
+import { KiloSprite } from '../../components/KiloHero'
+import { REACTION_ASSET } from '../../lib/mascot'
 import './RestOverlay.css'
 
 interface Props {
@@ -6,6 +8,7 @@ interface Props {
   totalSec: number
   loggedLabel: string
   nextUp: string
+  isPr?: boolean
   onExtend: () => void
   onSkip: () => void
 }
@@ -13,11 +16,13 @@ interface Props {
 const R = 94
 const CIRC = 2 * Math.PI * R
 
-export function RestOverlay({ remainingSec, totalSec, loggedLabel, nextUp, onExtend, onSkip }: Props) {
+export function RestOverlay({ remainingSec, totalSec, loggedLabel, nextUp, isPr, onExtend, onSkip }: Props) {
   const pct = totalSec > 0 ? remainingSec / totalSec : 0
   return (
     <div className="rest-overlay">
-      <div className="rest-kilo" aria-hidden="true" />
+      {/* Mascot reaction hook: PR sets get the celebration variant. */}
+      <KiloSprite asset={isPr ? REACTION_ASSET.pr : REACTION_ASSET.rest} height={140} />
+      {isPr && <div className="rest-pr-badge">NEW PR 🎉</div>}
       <div className="rest-label">REST · LOGGED {loggedLabel}</div>
       <div className="rest-ring-wrap">
         <svg width="210" height="210" viewBox="0 0 210 210" className="rest-ring">

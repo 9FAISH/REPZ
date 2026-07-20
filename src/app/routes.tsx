@@ -8,6 +8,8 @@ import { LibraryScreen } from '../screens/train/LibraryScreen'
 import { LiveScreen } from '../screens/train/LiveScreen'
 import { FoodScreen } from '../screens/food/FoodScreen'
 import { ProgressScreen } from '../screens/progress/ProgressScreen'
+import { RecordsScreen } from '../screens/progress/RecordsScreen'
+import { ShelfScreen } from '../screens/progress/ShelfScreen'
 
 // Hash routing keeps deep links working on GitHub Pages (no server rewrites).
 export const router = createHashRouter([
@@ -23,6 +25,8 @@ export const router = createHashRouter([
       { path: 'train/live', element: <LiveScreen /> },
       { path: 'food', element: <FoodScreen /> },
       { path: 'progress', element: <ProgressScreen /> },
+      { path: 'progress/records', element: <RecordsScreen /> },
+      { path: 'progress/shelf', element: <ShelfScreen /> },
     ],
   },
 ])

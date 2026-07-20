@@ -1,0 +1,60 @@
+.shelf-back {
+  align-self: flex-start;
+}
+
+.shelf-sub {
+  font-size: var(--fs-sub);
+  color: var(--text-muted);
+  margin-top: -8px;
+  line-height: 1.5;
+}
+
+.shelf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.shelf-item {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: var(--pad-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.shelf-art {
+  height: 118px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.shelf-art-locked {
+  filter: grayscale(1) brightness(0.4);
+  opacity: 0.8;
+}
+
+.shelf-meta {
+  text-align: center;
+}
+
+.shelf-name {
+  font-size: var(--fs-body);
+  font-weight: 800;
+}
+
+.shelf-req {
+  font-size: var(--fs-tiny);
+  font-weight: 600;
+  margin-top: 3px;
+  color: var(--text-muted);
+}
+
+.shelf-req-locked {
+  font-weight: 800;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}

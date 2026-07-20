@@ -1,0 +1,82 @@
+.records-back {
+  align-self: flex-start;
+}
+
+.records-sub {
+  font-size: var(--fs-sub);
+  color: var(--text-muted);
+  margin-top: -8px;
+  line-height: 1.5;
+}
+
+.records-empty {
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.records-row {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.records-main {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.records-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.records-meta {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.records-e1rm {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.records-unit {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.records-chart {
+  width: 100%;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 10px;
+}
+
+.records-chart-empty {
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+  font-weight: 600;
+}

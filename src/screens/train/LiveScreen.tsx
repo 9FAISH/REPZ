@@ -27,6 +27,7 @@ import {
 } from '../../lib/liveSession/notifications'
 import { RestOverlay } from './RestOverlay'
 import { PlateSheet } from './PlateSheet'
+import { isPrSet } from '../../lib/progress'
 import type { Effort, Exercise, WorkoutSession } from '../../db/types'
 import './LiveScreen.css'
 
@@ -54,6 +55,7 @@ export function LiveScreen() {
   const [resting, setResting] = useState(false)
   const [restState, setRestState] = useState({ remainingSec: 0, totalSec: REST_SECONDS })
   const [plateOpen, setPlateOpen] = useState(false)
+  const [lastWasPr, setLastWasPr] = useState(false)
   const [notifOn, setNotifOn] = useState(false)
   const timerRef = useRef<RestTimer | null>(null)
   if (!timerRef.current) timerRef.current = new RestTimer()
@@ -217,14 +219,18 @@ export function LiveScreen() {
       const perExercise = (id: string) => dbSets.filter((s) => s.exerciseId === id).length
       const done = perExercise(current.exerciseId)
       if (done >= SETS_PER_EXERCISE) return
-      await logSet({
+      const entry = {
         sessionId: session.id,
         exerciseId: current.exerciseId,
         setNumber: done + 1,
         weightKg: weight,
         reps,
         effort,
-      })
+      }
+      // PR check against all history before this set lands (mascot hook).
+      const history = await db.setLogs.toArray()
+      setLastWasPr(isPrSet(history, { ...entry, loggedAt: Date.now() }))
+      await logSet(entry)
       const nowDone = done + 1
       if (nowDone >= SETS_PER_EXERCISE && exIdx < exercises.length - 1) {
         setExIdx(exIdx + 1) // per-exercise init effect resets weight/reps
@@ -386,6 +392,7 @@ export function LiveScreen() {
           totalSec={restState.totalSec}
           loggedLabel={lastLog ? `${lastLog.weightKg} KG × ${lastLog.reps}` : 'SET'}
           nextUp={`Next: set ${setNumber} of ${SETS_PER_EXERCISE} — ${current!.name}`}
+          isPr={lastWasPr}
           onExtend={() => timer.extend(30)}
           onSkip={() => timer.skip()}
         />
