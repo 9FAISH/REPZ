@@ -2,10 +2,10 @@
   position: absolute;
   left: 14px;
   right: 14px;
-  /* The design's 22px float assumed no safe-area inset. Stacking it on top
-     of a 34px home indicator left ~56px of dead space under the bar on
-     device, so the inset REPLACES the float rather than adding to it. */
-  bottom: max(12px, env(safe-area-inset-bottom));
+  /* The design's 22px float assumed no safe-area inset. Adding it to a 34px
+     home indicator left dead space, so the bar tucks INTO the inset zone,
+     clearing the indicator line without floating far above it. */
+  bottom: max(10px, calc(env(safe-area-inset-bottom) - 12px));
   z-index: 30;
   display: flex;
   background: rgba(21, 23, 27, 0.86);
