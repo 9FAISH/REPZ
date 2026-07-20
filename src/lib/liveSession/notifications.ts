@@ -9,6 +9,14 @@
  *   - Dev server / denied permission: everything no-ops.
  *  The interface mirrors what a Capacitor plugin would implement natively. */
 
+import {
+  isNative,
+  requestNativePermission,
+  scheduleRestEnd,
+  cancelRestNotification,
+  onNativeAction,
+} from './nativeTimer.ts'
+
 export type NotifAction = 'skip' | 'extend' | 'done-set' | 'add-rep'
 
 export interface RestNotificationState {
@@ -22,10 +30,12 @@ export interface RestNotificationState {
 const TAG = 'repz-rest-timer'
 
 export function notificationsSupported(): boolean {
+  if (isNative()) return true // native shell always has a notification path
   return 'Notification' in window && 'serviceWorker' in navigator
 }
 
 export async function requestNotificationPermission(): Promise<boolean> {
+  if (isNative()) return requestNativePermission()
   if (!notificationsSupported()) return false
   if (Notification.permission === 'granted') return true
   if (Notification.permission === 'denied') return false
@@ -38,6 +48,12 @@ async function registrationOrNull(): Promise<ServiceWorkerRegistration | null> {
 }
 
 export async function showRestNotification(state: RestNotificationState): Promise<void> {
+  // Native shell: a real scheduled/ongoing notification that survives
+  // backgrounding — the whole reason the Capacitor layer exists.
+  if (isNative()) {
+    await scheduleRestEnd(state)
+    return
+  }
   const reg = await registrationOrNull()
   if (!reg) return
   const maxActions = (Notification as unknown as { maxActions?: number }).maxActions ?? 0
@@ -62,13 +78,22 @@ export async function showRestNotification(state: RestNotificationState): Promis
 }
 
 export async function closeRestNotification(): Promise<void> {
+  if (isNative()) {
+    await cancelRestNotification()
+    return
+  }
   const reg = await registrationOrNull()
   if (!reg) return
   for (const n of await reg.getNotifications({ tag: TAG })) n.close()
 }
 
-/** Listen for action taps relayed by the SW. Returns an unsubscribe fn. */
+/** Listen for action taps — from the SW relay on web, or the plugin
+ *  listener natively. Both emit the same action names. */
 export function onNotificationAction(cb: (action: NotifAction) => void): () => void {
+  if (isNative()) {
+    void onNativeAction((action) => cb(action as NotifAction))
+    return () => {} // plugin listeners live for the app session
+  }
   if (!('serviceWorker' in navigator)) return () => {}
   const handler = (e: MessageEvent) => {
     if (e.data?.type === 'repz-notif-action') cb(e.data.action as NotifAction)

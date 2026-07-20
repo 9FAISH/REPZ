@@ -11,6 +11,8 @@ import './styles/tokens.css'
 import './styles/global.css'
 import { router } from './app/routes'
 import { seedExercises } from './db/seed'
+// Side-effect import: registers the service worker before any screen mounts.
+import './lib/swUpdate'
 import { db } from './db/db'
 import * as repo from './db/repo'
 
