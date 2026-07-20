@@ -280,7 +280,14 @@ function writeOutput(cache, chosen) {
   })
   // Code-point compare (not localeCompare): identical ordering — and thus an
   // identical version hash — on every machine regardless of locale/ICU.
+  // Preserve records merged in from other datasets (see
+  // scripts/add-machine-exercises.mjs) so refreshing this source never
+  // silently drops them.
+  const previous = existsSync(OUT_EXERCISES) ? JSON.parse(readFileSync(OUT_EXERCISES, 'utf8')) : []
+  const foreign = previous.filter((e) => e.source)
+  records.push(...foreign)
   records.sort((a, b) => (a.exerciseId < b.exerciseId ? -1 : a.exerciseId > b.exerciseId ? 1 : 0))
+  if (foreign.length) console.log(`  (kept ${foreign.length} merged records from other sources)`)
 
   mkdirSync(OUT_DIR, { recursive: true })
   const json = JSON.stringify(records)

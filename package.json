@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "fetch:exercises": "node scripts/fetch-exercises.mjs",
+    "add:machines": "node scripts/add-machine-exercises.mjs",
     "smoke:db": "node scripts/smoke-db.mjs",
     "test:unit": "node scripts/test-livesession.mjs && node scripts/test-nutrition.mjs && node scripts/test-progress.mjs",
     "test:e2e": "node scripts/e2e-setup.mjs && node scripts/e2e-builder.mjs && node scripts/e2e-live.mjs && node scripts/e2e-nutrition.mjs && node scripts/e2e-progress.mjs",

@@ -15,9 +15,12 @@ export interface Exercise {
   exerciseTips: string[]
   variations: string[]
   relatedExerciseIds: string[]
+  /** Absolute CDN URL, or a catalog-relative path for bundled images. */
   imageUrl?: string
   imageUrls?: Partial<Record<'360p' | '480p' | '720p' | '1080p', string>>
   videoUrl?: string
+  /** Provenance when the record came from a merged dataset. */
+  source?: string
 }
 
 export type Sex = 'male' | 'female'

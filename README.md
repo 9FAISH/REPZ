@@ -44,11 +44,27 @@ npm run fetch:exercises            # throttled + resumable; safe to interrupt
 npm run fetch:exercises -- --status   # show cached progress
 ```
 
-Free-tier notes (observed): 2,000 requests/month, catalog capped at 200
+Free-tier notes (observed): 2,000 requests/month, catalog capped at **200**
 exercises, burst limit on the detail endpoint (script paces details at 15s and
-rides out `MITIGATION_REDIRECT` cooloffs). Media is watermarked (URLs referenced
-as-is; swap via `src/lib/media.ts` when upgrading — paid tiers also unlock the
-full ~12.8k-exercise catalog with the same script).
+rides out `MITIGATION_REDIRECT` cooloffs). Media is watermarked. Their Pro tier
+is **$100/month** and raises the library only to 500, so it isn't worth it for
+personal use — machine coverage comes from the free dataset below instead.
+
+### Machine & cable exercises (free, public domain)
+
+The ExerciseDB free tier ships just 1 machine + 3 cable exercises. This merges
+in [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense /
+public domain — no key, no quota):
+
+```sh
+npm run add:machines              # merges ~139 machine + cable exercises
+npm run add:machines -- --dry-run # report only
+```
+
+Images are downloaded and re-encoded locally (480 px webp, ~3 MB total) rather
+than hotlinked, so they stay in the offline precache. The merge is idempotent,
+and `fetch:exercises` preserves merged records, so the two scripts can run in
+any order.
 
 ## Verify
 
