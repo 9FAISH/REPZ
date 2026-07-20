@@ -1,14 +1,7 @@
 import type { Profile, WeighIn, DayType, Goal } from '../db/types'
 
-/** Dashboard-level derived stats. The full nutrition engine (Mifflin-St Jeor
- *  TDEE, adaptive calorie targets) lands in Phase 5 — protein here uses the
- *  same g/kg policy that engine will keep. */
-
-/** Protein target: 1.6–2.2 g/kg band; cutting sits high to spare muscle. */
-export function proteinTargetG(profile: Pick<Profile, 'weightKg' | 'goal'>): number {
-  const perKg = profile.goal === 'cut' ? 2.2 : 1.8
-  return Math.round(profile.weightKg * perKg)
-}
+/** Dashboard-level derived stats. Calorie/protein targets live in
+ *  src/lib/nutrition.ts (the Phase 5 engine). */
 
 /** Weight trend in kg/week: 7-day rolling average now vs one week earlier.
  *  The rate divides the change between the two window averages by the gap

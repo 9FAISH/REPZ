@@ -17,13 +17,8 @@ import type {
 
 const now = () => Date.now()
 
-/** Local calendar date as 'YYYY-MM-DD' (weigh-ins/nutrition are day-keyed). */
-export function todayKey(d: Date = new Date()): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
+import { todayKey } from '../lib/dates.ts'
+export { todayKey }
 
 // ── Profile ──
 export const getProfile = () => db.profile.get('main')

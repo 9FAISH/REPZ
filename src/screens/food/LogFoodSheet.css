@@ -1,0 +1,122 @@
+.foodsheet-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(5, 6, 8, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  touch-action: none;
+}
+
+.foodsheet {
+  background: var(--sheet);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 18px calc(40px + env(safe-area-inset-bottom));
+  animation: kin 0.25s ease;
+}
+
+.foodsheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-dashed);
+  margin: 0 auto 14px;
+}
+
+.foodsheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.foodsheet-label {
+  font-size: var(--fs-label);
+  font-weight: 900;
+  letter-spacing: var(--ls-label);
+  color: var(--accent);
+}
+
+.foodsheet-title {
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+  margin-top: 3px;
+}
+
+.foodsheet-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.foodsheet-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.foodsheet-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--sheet-item);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--r-btn);
+  padding: 14px 16px;
+}
+
+.foodsheet-field-label {
+  font-size: var(--fs-label);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.foodsheet-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--fs-ex-name);
+  font-weight: 800;
+  text-align: right;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.foodsheet-input::placeholder {
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.foodsheet-save {
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--r-btn);
+  background: var(--accent);
+  border: none;
+  color: var(--on-accent);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.foodsheet-save:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

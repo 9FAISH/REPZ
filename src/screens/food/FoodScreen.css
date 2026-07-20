@@ -1,0 +1,217 @@
+.food-title {
+  margin-top: 4px;
+}
+
+/* ── Rings ── */
+.food-rings-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.food-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.food-legend-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.food-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+.food-swatch-pro {
+  background: var(--accent-bright);
+}
+
+.food-legend-label {
+  font-size: var(--fs-label);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.food-legend-value {
+  font-size: var(--fs-card-title);
+  font-weight: 900;
+}
+
+.food-legend-target {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* ── Auto-adjust callout ── */
+.food-adjust-card {
+  background: var(--accent-tint-8);
+  border: 1px solid var(--accent-border-35);
+  border-radius: var(--r-card);
+  padding: var(--pad-card);
+}
+
+.food-adjust-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.food-adjust-badge {
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.food-adjust-when {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.food-adjust-text {
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  margin-top: 10px;
+  color: var(--text-body);
+}
+
+.food-adjust-text b {
+  color: var(--accent);
+}
+
+.food-adjust-link {
+  margin-top: 12px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: var(--fs-sub);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ── Actions ── */
+.food-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.food-log-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--r-ctl);
+  background: var(--accent);
+  border: none;
+  color: var(--on-accent);
+  font-size: var(--fs-body);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.food-repeat-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  font-size: var(--fs-body);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.food-repeat-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ── Meals list ── */
+.food-meals {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
+  padding: 6px 16px;
+}
+
+.food-meal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.food-meal-row:last-child {
+  border-bottom: none;
+}
+
+.food-meal-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.food-meal-name {
+  font-size: var(--fs-base);
+  font-weight: 700;
+}
+
+.food-meal-when {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.food-meal-macros {
+  text-align: right;
+}
+
+.food-meal-kcal {
+  font-size: var(--fs-base);
+  font-weight: 800;
+}
+
+.food-meal-pro {
+  font-size: var(--fs-label);
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.food-meal-delete {
+  min-width: 40px;
+  height: 40px;
+  border-radius: var(--r-xs);
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.food-meal-delete-armed {
+  background: var(--warn-tint-15);
+  color: var(--warn);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  padding: 0 8px;
+}
+
+.food-disclaimer {
+  font-size: var(--fs-small);
+  color: var(--text-faint);
+  line-height: 1.55;
+}

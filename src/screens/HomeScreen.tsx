@@ -3,13 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { getProfile, dayTotals, listWeighIns, activityDates, getDraft } from '../db/repo'
 import { SLOT_DEFS } from '../lib/slots'
 import {
-  proteinTargetG,
   weightTrendKgPerWeek,
   onPace,
   currentStreak,
   todayDayType,
   DAY_TYPE_LABELS,
 } from '../lib/stats'
+import { effectiveTargets } from '../lib/nutrition'
+import { getAdaptation } from '../lib/nutritionStore'
 import { KiloHero } from '../components/KiloHero'
 import { useTodayKey } from '../lib/useTodayKey'
 import type { DayType } from '../db/types'
@@ -49,6 +50,7 @@ export function HomeScreen() {
   const totals = useLiveQuery(() => dayTotals(dateKey), [dateKey])
   const weighIns = useLiveQuery(listWeighIns, [])
   const activity = useLiveQuery(activityDates, [])
+  const adaptation = useLiveQuery(getAdaptation, [])
   const dayTypeForDraft = profile ? todayDayType(profile.split) : null
   const draft = useLiveQuery(
     async () => (dayTypeForDraft ? ((await getDraft(dayTypeForDraft)) ?? null) : null),
@@ -59,7 +61,8 @@ export function HomeScreen() {
 
   const streak = activity ? currentStreak(activity) : 0
   const dayType = dayTypeForDraft
-  const proteinTarget = proteinTargetG(profile)
+  const currentWeight = weighIns?.length ? weighIns[weighIns.length - 1].weightKg : profile.weightKg
+  const proteinTarget = effectiveTargets(profile, currentWeight, adaptation ?? undefined).proteinG
   const proteinEaten = Math.round(totals?.proteinG ?? 0)
   const proteinPct = Math.min(100, Math.round((proteinEaten / proteinTarget) * 100))
   const trend = weighIns ? weightTrendKgPerWeek(weighIns) : null
