@@ -2,10 +2,10 @@
   position: absolute;
   left: 14px;
   right: 14px;
-  /* The design's 22px float assumed no safe-area inset. Adding it to a 34px
-     home indicator left dead space, so the bar tucks INTO the inset zone,
-     clearing the indicator line without floating far above it. */
-  bottom: max(10px, calc(env(safe-area-inset-bottom) - 12px));
+  /* Sits low, mostly inside the home-indicator zone: the design's 22px
+     float plus a 34px inset read as dead space on device. The bar's own
+     8px padding keeps tap targets ~20px clear of the bottom edge. */
+  bottom: max(10px, calc(env(safe-area-inset-bottom) - 22px));
   z-index: 30;
   display: flex;
   background: rgba(21, 23, 27, 0.86);

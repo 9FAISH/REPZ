@@ -4,7 +4,7 @@
   left: 14px;
   right: 14px;
   /* Sits just above the tab bar (69px tall) at its new offset. */
-  bottom: calc(max(10px, calc(env(safe-area-inset-bottom) - 12px)) + 80px);
+  bottom: calc(max(10px, calc(env(safe-area-inset-bottom) - 22px)) + 80px);
   z-index: 31;
   display: flex;
   flex-direction: column;
